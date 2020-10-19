@@ -1,4 +1,5 @@
 import jieba
+import jieba.posseg as pseg
 
 
 def cut_words(path):
@@ -6,8 +7,8 @@ def cut_words(path):
     texts = []
     with open(path, 'r', encoding='utf-8') as f:
         for line in f.readlines():
-            texts.append([word for word in jieba.lcut(line.strip(), use_paddle=True, cut_all=True)
-                          if word not in stop_set])
+            texts.append([word.word for word in pseg.cut(line.strip(), use_paddle=True)
+                          if word.word not in stop_set and word.flag not in ['u', 'w', 'x', 'p', 'q', 'm', 'e', 'd']])
     save_data("./corpus/test_corpora_cut.txt", texts)
 
 
