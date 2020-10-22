@@ -1,9 +1,12 @@
 import jieba
 import jieba.posseg as pseg
 
+stop_set = set(line.strip() for line in open("./reference/HIT_stopwords.txt", 'r', encoding='utf-8').readlines())
+def cut_json(path):
+    with
+
 
 def cut_words(path):
-    stop_set = set(line.strip() for line in open("./reference/HIT_stopwords.txt", 'r', encoding='utf-8').readlines())
     texts = []
     with open(path, 'r', encoding='utf-8') as f:
         for line in f.readlines():

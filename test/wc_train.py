@@ -15,7 +15,7 @@ def word2v_train():
     # print(model.wv.vocab)
 
     # print(model.similarity("公平", "公开"))
-    print(model.most_similar("公平"))
+    print(model.most_similar("悲哀"))
     # model.save('./reference/output')
 
 
@@ -30,14 +30,16 @@ def glove_train():
     glove.add_dictionary(corpus_model.dictionary)
 
     # glove.word_vectors[glove.dictionary['你']]
-    print(glove.most_similar('公平', number=10))
+    print(glove.most_similar("悲哀", number=10))
 
 
 def fasttext_train():
     # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
     sentences = word2vec.LineSentence(u'../wordvector/corpus/test_corpora_cut.txt')
     model = FastText(sentences,  size=100, window=5, min_count=1, iter=10, min_n=2, max_n=6, word_ngrams=0)
-    print(model.most_similar("公平"))
+    for i in model.most_similar("悲哀"):
+        print(i)
+    # print(model.most_similar("悲哀"))
 
 
 if __name__ == '__main__':
