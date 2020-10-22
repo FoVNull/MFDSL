@@ -1,0 +1,17 @@
+  > ADJ：形容词
+  > ADP：adposition 介词
+  > ADV：副词
+  > AUX：辅助动词
+  > CONJ：协调联合
+  > DET：确定者 (the
+  > INTJ：感叹词
+  > NOUN：名词
+  > NUM：数字
+  > PART：粒子
+  > PRON：代名词
+  > PROPN：专有名词
+  > PUNCT：标点符号
+  > SCONJ：从属连词
+  > SYM：符号
+  > VERB：动词
+  > X：其他
