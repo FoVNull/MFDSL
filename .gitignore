@@ -1,6 +1,5 @@
 
 corpus/all_data_data.json
-corpus/smp_cut.txt
 corpus/test_corpora.txt
 corpus/usual_eval_data.json
 corpus/virus_eval_data.json
