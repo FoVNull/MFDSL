@@ -47,8 +47,11 @@ def cos_similarity(word1, word2) -> float:
     model = Word2Vec.load("reference/output")
     return model.wv.similarity(word1, word2)
 
+
 def seed_select():
-    print(0)
+    with open("reference/汉语情感词极值表.txt", 'r', encoding='gbk') as f:
+        
+
 
 
 tf2w_dic_build("wordvector/corpus/smp_cut.txt", ["wordvector/corpus/test_corpora_cut.txt"])
