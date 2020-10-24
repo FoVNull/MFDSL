@@ -4,11 +4,11 @@ corpus/test_corpora.txt
 corpus/usual_eval_data.json
 corpus/virus_eval_data.json
 reference/HIT_stopwords.txt
-reference/output.trainables.syn1neg.npy
-reference/output.trainables.vectors_ngrams_lockf.npy
-reference/output.trainables.vectors_vocab_lockf.npy
-reference/output.wv.vectors.npy
-reference/output.wv.vectors_ngrams.npy
-reference/output.wv.vectors_vocab.npy
+reference/wc_model/output.trainables.syn1neg.npy
+reference/wc_model/output.trainables.vectors_ngrams_lockf.npy
+reference/wc_model/output.trainables.vectors_vocab_lockf.npy
+reference/wc_model/output.wv.vectors.npy
+reference/wc_model/output.wv.vectors_ngrams.npy
+reference/wc_model/output.wv.vectors_vocab.npy
 reference/tf2w.pkl
 reference/~$情感词汇本体.xlsx
