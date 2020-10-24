@@ -1,5 +1,6 @@
 import math
 import pickle
+import pandas as pd
 from gensim.models import Word2Vec
 
 
@@ -49,9 +50,14 @@ def cos_similarity(word1, word2) -> float:
 
 
 def seed_select():
+    senti_dic = {}
     with open("reference/汉语情感词极值表.txt", 'r', encoding='gbk') as f:
-        
+        for line in f.readlines():
+            w, v = line.split(" ")
+            senti_dic[w] = v
 
+    df = pd.read_excel("reference/情感词汇本体.xlsx", 'rb')
+    print(df['词语'], df['情感分类'], df['强度'])
 
 
 tf2w_dic_build("wordvector/corpus/smp_cut.txt", ["wordvector/corpus/test_corpora_cut.txt"])
