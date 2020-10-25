@@ -23,11 +23,20 @@ def cut_words(path):
     save_data("../corpus/test_corpora_cut.txt", texts)
 
 
+def merge_corpus(path1, path2, save_path):
+    texts = [line for line in open(path1, 'r', encoding='utf-8').readlines()] \
+           + [line for line in open(path2, 'r', encoding='utf-8').readlines()]
+    with open(save_path, 'w', encoding='utf-8') as f:
+        for text in texts:
+            f.write(text)
+
+
 def save_data(path, texts):
     with open(path, 'w', encoding='utf-8') as f:
         for text in texts:
             f.write(" ".join(text) + "\n")
 
 
-# cut_words("./corpus/test_corpora.txt")
-cut_json("../corpus/all_data_data.json")
+# cut_words("../corpus/test_corpora.txt")
+# cut_json("../corpus/all_data_data.json")
+merge_corpus("../corpus/test_corpora_cut.txt", "../corpus/smp_cut.txt", "../corpus/all_cut.txt")

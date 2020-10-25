@@ -1,7 +1,6 @@
 import math
 import pickle
 import pandas as pd
-from gensim.models import Word2Vec
 
 
 def tf2w_dic_build(file: str, others: list):
@@ -33,10 +32,8 @@ def tf2w_dic_build(file: str, others: list):
             tf2w[k] = tf[k] * tf_other[k]
         else:
             tf2w[k] = tf[k]
-    # res = sorted(tf_idf.items(), key=lambda x: x[1], reverse=True)
-    # print(res[0:20])
 
-    pickle.dump(tf2w, open("./reference/tf2w.pkl", 'wb'))
+    pickle.dump(sorted(tf2w.items(), key=lambda x: x[1], reverse=True), open("./reference/tf2w.pkl", 'wb'))
 
 
 def tf2w_calculate(words: list) -> list:
@@ -44,22 +41,17 @@ def tf2w_calculate(words: list) -> list:
     return [tf2w_dic[word] for word in words]
 
 
-def cos_similarity(word1, word2) -> float:
-    model = Word2Vec.load("./reference/wc_model/output")
-    return model.wv.similarity(word1, word2)
-
-
-def seed_select():
+def seed_select(dimension: int):
     senti_dic = {}
     with open("./reference/汉语情感词极值表.txt", 'r', encoding='gbk') as f:
         for line in f.readlines():
             w, v = line.strip().split("\t")
-            senti_dic[w] = v
+            senti_dic[w] = float(v)*10
 
     df = pd.read_excel("./reference/情感词汇本体.xlsx", header=0, keep_default_na=False)
     for i in range(len(df)):
         emotion_type = df.iloc[i]['情感分类']
-        strength = df.loc[i, '强度']/10
+        strength = df.loc[i, '强度']
         word = df.loc[i, '词语']
         if emotion_type == 'PC':
             continue
@@ -68,13 +60,12 @@ def seed_select():
         if emotion_type[0] == 'N':
             senti_dic[word] = float(senti_dic.get(word, 0.0)) - strength
 
-    tf2w_dic = pickle.load(open("./reference/tf2w.pkl", 'rb'))
-    tf2w_sort = sorted(tf2w_dic.items(), key=lambda x: x[1], reverse=True)
+    tf2w = pickle.load(open("./reference/tf2w.pkl", 'rb'))
 
     p_seed_dic = {}
     n_seed_dic = {}
 
-    for t in tf2w_sort[:10000]:
+    for t in tf2w[:10000]:
         if t[0] not in senti_dic.keys():
             continue
         s = float(senti_dic[t[0]]) * float(t[1])
@@ -82,16 +73,12 @@ def seed_select():
             p_seed_dic[t[0]] = s
         if s < 0:
             n_seed_dic[t[0]] = s
-    p_seed = sorted(p_seed_dic.items(), key=lambda x: x[1], reverse=True)[:40]
-    n_seed = sorted(n_seed_dic.items(), key=lambda x: x[1], reverse=False)[:40]
+    p_seeds = sorted(p_seed_dic.items(), key=lambda x: x[1], reverse=True)[:dimension]
+    n_seeds = sorted(n_seed_dic.items(), key=lambda x: x[1], reverse=False)[:dimension]
 
     with open("./reference/seeds.tsv", 'w', encoding='utf-8') as f:
-        for tp in p_seed, n_seed:
-            f.write(tp[0]+"\t"+tp[1]+"\n")
-
-
-# tf2w_dic_build("wordvector/corpus/smp_cut.txt", ["wordvector/corpus/test_corpora_cut.txt"])
-# tf2w_list = tf2w_calculate(["肺炎", "不是"])
-# print(tf2w_list)
-seed_select()
+        for tp in p_seeds:
+            f.write(tp[0]+"\t"+str(tp[1])+"\n")
+        for tp in n_seeds:
+            f.write(tp[0]+"\t"+str(tp[1])+"\n")
 
