@@ -16,6 +16,7 @@ def tf2w_dic_build(file: str, others: list):
         tf[k] = (v*10000)/word_count
 
     word_dic.clear()
+    word_count = 0
     tf2w = {}
     tf_other = {}
     for other_file in others:
@@ -25,20 +26,20 @@ def tf2w_dic_build(file: str, others: list):
                     word_count += 1
                     word_dic[w] = word_dic.get(w, 0) + 1
     for k, v in word_dic.items():
-        tf_other[k] = math.log((v+tf.get(k, 0))*10000/word_count, 0.5)
+        tf_other[k] = math.log(v*10000/word_count, 0.5)
 
     for k in tf.keys():
         if k in tf_other.keys():
             tf2w[k] = tf[k] * tf_other[k]
         else:
-            tf2w[k] = tf[k]
+            tf2w[k] = tf[k] * math.log(0.5*10000/word_count, 0.5)
 
     pickle.dump(sorted(tf2w.items(), key=lambda x: x[1], reverse=True), open("./reference/tf2w.pkl", 'wb'))
 
 
-def tf2w_calculate(words: list) -> list:
+def tf2w_calculate():
     tf2w_dic = pickle.load(open("./reference/tf2w.pkl", 'rb'))
-    return [tf2w_dic[word] for word in words]
+    print(tf2w_dic[0:10])
 
 
 def seed_select(dimension: int):
@@ -46,7 +47,7 @@ def seed_select(dimension: int):
     with open("./reference/汉语情感词极值表.txt", 'r', encoding='gbk') as f:
         for line in f.readlines():
             w, v = line.strip().split("\t")
-            senti_dic[w] = float(v)*10
+            senti_dic[w] = float(v)*5
 
     df = pd.read_excel("./reference/情感词汇本体.xlsx", header=0, keep_default_na=False)
     for i in range(len(df)):
@@ -76,9 +77,19 @@ def seed_select(dimension: int):
     p_seeds = sorted(p_seed_dic.items(), key=lambda x: x[1], reverse=True)[:dimension]
     n_seeds = sorted(n_seed_dic.items(), key=lambda x: x[1], reverse=False)[:dimension]
 
+    # p_seeds = []
+    # n_seeds = []
+    # for tp in p_sorted:
+    #     p_seeds.append(
+    #         (tp[0], float(senti_dic[tp[0]]))
+    #     )
+    # for tp in n_sorted:
+    #     n_seeds.append(
+    #         (tp[0], float(senti_dic[tp[0]]))
+    #     )
+
     with open("./reference/seeds.tsv", 'w', encoding='utf-8') as f:
         for tp in p_seeds:
             f.write(tp[0]+"\t"+str(tp[1])+"\n")
         for tp in n_seeds:
             f.write(tp[0]+"\t"+str(tp[1])+"\n")
-

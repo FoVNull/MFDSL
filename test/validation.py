@@ -1,11 +1,12 @@
 import numpy as np
 from gensim.models import Word2Vec
+from gensim.models import FastText
 import pickle
 
 
 class Validation:
     def __init__(self):
-        self.model = Word2Vec.load("../reference/wc_model/output")
+        self.model = FastText.load("../reference/wc_model/output")
         self.senti_vector = pickle.load(open("../sv.pkl", 'rb'))
 
     @staticmethod
@@ -30,8 +31,14 @@ class Validation:
 
 
 validator = Validation()
+print("肺炎", "愤怒")
 validator.senti_sim("肺炎", "愤怒")
+
+print("疫情", "愤怒")
+validator.senti_sim("疫情", "愤怒")
+print("疫情", "高兴")
 validator.senti_sim("疫情", "高兴")
+
+print("医生", "致敬")
 validator.senti_sim("医生", "致敬")
-validator.senti_sim("悲伤", "高兴")
 # validator.most_sim("疫情", number=10)

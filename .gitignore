@@ -13,3 +13,8 @@ reference/wc_model/output.wv.vectors_vocab.npy
 reference/tf2w.pkl
 reference/~$情感词汇本体.xlsx
 .idea
+*.pyc
+reference/wc_model
+sv.pkl
+*.pyc
+sv.pkl
