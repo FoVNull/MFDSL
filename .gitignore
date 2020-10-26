@@ -16,5 +16,3 @@ reference/~$情感词汇本体.xlsx
 *.pyc
 reference/wc_model
 sv.pkl
-*.pyc
-sv.pkl
