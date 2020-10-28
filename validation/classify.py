@@ -1,6 +1,5 @@
 from sklearn.svm import SVC
 import argparse
-import collections
 import pickle
 import numpy as np
 
@@ -23,13 +22,15 @@ class Classifier:
                 data = line.split("\t")[0].split(" ")
                 senti = line.strip().split("\t")[1]
 
-                senten_vector = np.array([0.0] * 80)
+                senten_vector = np.array([0.0] * self.args.dimension)
                 count = 0
                 for word in data:
                     if word not in senti_vector:
                         continue
                     senten_vector += np.array(senti_vector[word], dtype='float64')
                     count += 1
+                if count == 0:
+                    continue
                 vector = senten_vector/count
                 self.train_data.append((vector.tolist(), senti))
 
@@ -37,7 +38,7 @@ class Classifier:
             res = []
             with open(path, 'r', encoding='utf-8') as f:
                 for line in f.readlines():
-                    senten_vector = np.array([0.0] * 80)
+                    senten_vector = np.array([0.0] * self.args.dimension)
                     data = line.split(" ")
                     count = 0
                     for word in data:
@@ -93,7 +94,9 @@ class Classifier:
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
     parse.add_argument("--corpus", type=str, default="hotel", help="specify corpus")
-    parse.add_argument("--dic_path", type=str, default="../sv.pkl", help="specify sentiment dictionary")
+    parse.add_argument("--dic_path", type=str, default="../w2_v.pkl", help="specify sentiment dictionary")
+    parse.add_argument("--dimension", default=200, type=int,
+                       help="dimension of dictionary")
 
     args = parse.parse_args()
 
