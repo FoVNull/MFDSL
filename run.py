@@ -17,7 +17,7 @@ if __name__ == '__main__':
     args = parse.parse_args()
 
     if args.tf2w:
-        tf2w_dic_build("./corpus/smp_cut.txt", ["./corpus/test_corpora_cut.txt"])
+        tf2w_dic_build("./corpus/hotel/train_cut.txt", ["./corpus/test.txt"])
 
     if args.select_seeds:
         seed_select(args.dimension)
@@ -37,8 +37,8 @@ if __name__ == '__main__':
     if args.model == 'word2vec':
         model = Word2Vec.load("./reference/wc_model/output")
     if args.model == 'fasttext':
-        # model = FastText.load("./reference/wc_model/output")
-        model = KeyedVectors.load_word2vec_format('D:/python/mylibs/cc.zh.300.vec', binary=False)
+        model = FastText.load("./reference/wc_model/output")
+        # model = KeyedVectors.load_word2vec_format('D:/python/mylibs/cc.zh.300.vec', binary=False)
 
     for tp in tqdm(tf2w):
         if tp[0] == '':
@@ -48,6 +48,3 @@ if __name__ == '__main__':
                          for i in range(len(seeds))]
 
     pickle.dump(sv_dic, open("sv.pkl", 'wb'))
-    # sv_matrix = DataFrame(sv_dic, index=seeds)
-    # sv_matrix.to_csv(open("sv.csv", 'wb', encoding='utf-8'), index=False)
-    # print(sv_matrix, sv_matrix.shape)

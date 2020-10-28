@@ -27,16 +27,16 @@
 pos_text = [line.strip() for line in open("../corpus/hotel/pos.txt", 'r', encoding='utf-8').readlines()]
 neg_text = [line.strip() for line in open("../corpus/hotel/neg.txt", 'r', encoding='utf-8').readlines()]
 
-with open("../corpus/hotel/train.txt", 'w', encoding='utf-8') as f:
-    for i in pos_text[:1300]:
-        f.write(i+"\n")
-    for i in neg_text[:1300]:
-        f.write(i + "\n")
+with open("../corpus/hotel/train.tsv", 'w', encoding='utf-8') as f:
+    for i in pos_text[1000:2000]:
+        f.write(i + "\tp\n")
+    for i in neg_text[1000:2000]:
+        f.write(i + "\tn\n")
 
 with open("../corpus/hotel/neg_test.txt", 'w', encoding='utf-8') as f:
-    for i in pos_text[1300:]:
+    for i in neg_text[:1000]+neg_text[2000:]:
         f.write(i+"\n")
 
 with open("../corpus/hotel/pos_test.txt", 'w', encoding='utf-8') as f:
-    for i in neg_text[1300:]:
+    for i in pos_text[:1000]+pos_text[2000:]:
         f.write(i+"\n")

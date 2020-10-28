@@ -18,3 +18,6 @@ reference/wc_model
 sv.pkl
 reference/wc_model/output
 test
+ft_v.pkl
+sv.pkl
+*.pkl
