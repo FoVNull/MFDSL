@@ -7,6 +7,7 @@ def tf2w_dic_build(file: str, others: list):
     word_dic = {}
     tf = {}
     word_count = 0
+    tf_value = 0
     with open(file, 'r', encoding='utf-8') as f:
         for line in f.readlines():
             for w in line.strip().split(" "):
@@ -14,6 +15,8 @@ def tf2w_dic_build(file: str, others: list):
                 word_dic[w] = word_dic.get(w, 0)+1
     for k, v in word_dic.items():
         tf[k] = (v*10000)/word_count
+        tf_value += tf[k]
+    tf_value /= word_count
 
     word_dic.clear()
     word_count = 0
@@ -26,13 +29,13 @@ def tf2w_dic_build(file: str, others: list):
                     word_count += 1
                     word_dic[w] = word_dic.get(w, 0) + 1
     for k, v in word_dic.items():
-        tf_other[k] = math.log(v*10000/word_count, 0.5)
+        tf_other[k] = math.log(v*10000/word_count, tf_value)
 
     for k in tf.keys():
         if k in tf_other.keys():
             tf2w[k] = tf[k] * tf_other[k]
         else:
-            tf2w[k] = tf[k] * math.log(0.5*10000/word_count, 0.5)
+            tf2w[k] = tf[k] * math.log(0.5*10000/word_count, tf_value)
 
     pickle.dump(sorted(tf2w.items(), key=lambda x: x[1], reverse=True), open("./reference/tf2w.pkl", 'wb'))
 

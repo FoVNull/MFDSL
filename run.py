@@ -17,7 +17,7 @@ if __name__ == '__main__':
     args = parse.parse_args()
 
     if args.tf2w:
-        tf2w_dic_build("./corpus/hotel/train_cut.txt", ["./corpus/test.txt"])
+        tf2w_dic_build("./corpus/hotel/train_cut.txt", ["./corpus/test_corpora_cut.txt", "./corpus/smp_cut.txt"])
 
     if args.select_seeds:
         seed_select(args.dimension)
