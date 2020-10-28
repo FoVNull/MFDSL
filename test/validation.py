@@ -41,4 +41,5 @@ validator.senti_sim("疫情", "高兴")
 
 print("医生", "致敬")
 validator.senti_sim("医生", "致敬")
+validator.senti_sim("悲伤", "伤心")
 # validator.most_sim("疫情", number=10)

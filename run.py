@@ -1,10 +1,9 @@
 import argparse
 import pickle
-import pandas as pd
-from pandas import DataFrame
 from tqdm import tqdm
 from gensim.models import Word2Vec
 from gensim.models import FastText
+from gensim.models import KeyedVectors
 
 from utils import tf2w_dic_build, seed_select, tf2w_calculate
 
@@ -34,10 +33,12 @@ if __name__ == '__main__':
     tf2w = pickle.load(open("./reference/tf2w.pkl", 'rb'))
 
     sv_dic = {}
+    assert args.model == 'fasttext' or args.model == 'word2vec', 'you can choose: [word2vec, fasttext]'
     if args.model == 'word2vec':
         model = Word2Vec.load("./reference/wc_model/output")
     if args.model == 'fasttext':
-        model = FastText.load("./reference/wc_model/output")
+        # model = FastText.load("./reference/wc_model/output")
+        model = KeyedVectors.load_word2vec_format('D:/python/mylibs/cc.zh.300.vec', binary=False)
 
     for tp in tqdm(tf2w):
         if tp[0] == '':
