@@ -79,13 +79,13 @@ class Classifier:
 
         p_pre = p_cor/(p_cor + p_wro)
         p_rec = p_cor/(p_cor + n_wro)
-        print("pos predict:\n", "p:", p_cor, " n:", p_wro, "\npos precision:", p_pre,
+        print(">pos predict:\n", "p:", p_cor, " n:", p_wro, "\npos precision:", p_pre,
               "\nrecall:", p_rec, "\nf1:", 2*p_pre*p_rec/(p_pre+p_rec))
         print("#" * 40)
 
         n_pre = n_cor/(n_cor + n_wro)
         n_rec = n_cor/(n_cor + p_wro)
-        print("neg predict:\n", "p:", n_wro, " n:", n_cor, "\nneg precision:", n_pre,
+        print(">neg predict:\n", "p:", n_wro, " n:", n_cor, "\nneg precision:", n_pre,
               "\nrecall:", n_rec, "\nf1:", 2*n_pre*n_rec/(n_pre+n_rec))
         print("#" * 40)
         print("overall acc: ", (p_cor+n_cor) / (p_cor + p_wro + n_cor + n_wro))

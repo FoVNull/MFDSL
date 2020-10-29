@@ -29,13 +29,13 @@ def tf2w_dic_build(file: str, others: list):
                     word_count += 1
                     word_dic[w] = word_dic.get(w, 0) + 1
     for k, v in word_dic.items():
-        tf_other[k] = math.log(v*10000/word_count, tf_value)
+        tf_other[k] = math.log(v*10000/word_count, 1-tf_value)
 
     for k in tf.keys():
         if k in tf_other.keys():
             tf2w[k] = tf[k] * tf_other[k]
         else:
-            tf2w[k] = tf[k] * math.log(0.5*10000/word_count, tf_value)
+            tf2w[k] = tf[k] * math.log(0.5*10000/word_count, 1-tf_value)
 
     pickle.dump(sorted(tf2w.items(), key=lambda x: x[1], reverse=True), open("./reference/tf2w.pkl", 'wb'))
 

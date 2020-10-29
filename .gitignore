@@ -21,3 +21,4 @@ test
 ft_v.pkl
 sv.pkl
 *.pkl
+*.pyc
