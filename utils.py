@@ -1,6 +1,10 @@
 import math
 import pickle
 import pandas as pd
+import tensorflow as tf
+import tensorflow_transform as tft
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 
 def tf2w_dic_build(file: str, others: list):
@@ -43,6 +47,35 @@ def tf2w_dic_build(file: str, others: list):
 def tf2w_calculate():
     tf2w_dic = pickle.load(open("./reference/tf2w.pkl", 'rb'))
     print(tf2w_dic[0:10])
+
+
+def tf_idf(file: str):
+    sentences = []
+    vocab = set()
+    max_len = 0
+    with open(file, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            vocab_list = line.strip().split(" ")
+            max_len = max(max_len, len(vocab_list))
+            sentences.append(line.strip())
+            for v in vocab_list:
+                vocab.add(v)
+    # tokenizer = Tokenizer(num_words=len(vocab), oov_token="<OOV>")
+    # tokenizer.fit_on_texts(sentences)  # 构建字典
+    #
+    # seq = tokenizer.texts_to_sequences(sentences)
+    # print(type(seq))
+    #
+    # padded = pad_sequences(seq, padding="post", maxlen=5, truncating="post")
+    # print(padded, type(padded))
+
+    tokens = tf.compat.v1.string_split(sentences)
+    print(tokens)
+    indices = tft.compute_and_apply_vocabulary(tokens, top_k=len(vocab))
+
+    bow_indices, weight = tft.tfidf(indices, len(vocab) + 1)
+
+    print(bow_indices, weight)
 
 
 def seed_select(dimension: int):
@@ -96,3 +129,6 @@ def seed_select(dimension: int):
             f.write(tp[0]+"\t"+str(tp[1])+"\n")
         for tp in n_seeds:
             f.write(tp[0]+"\t"+str(tp[1])+"\n")
+
+
+tf_idf("./corpus/hotel/train_cut.txt")
