@@ -49,7 +49,7 @@ def tf2w_calculate():
     print(tf2w_dic[0:10])
 
 
-def tf_idf(file: str):
+def tf_idf_build(file: str):
     sentences = []
     vocab = set()
     max_len = 0
@@ -57,28 +57,21 @@ def tf_idf(file: str):
         for line in f.readlines():
             vocab_list = line.strip().split(" ")
             max_len = max(max_len, len(vocab_list))
-            sentences.append(line.strip())
+            sentences.append(vocab_list)
             for v in vocab_list:
                 vocab.add(v)
-    # tokenizer = Tokenizer(num_words=len(vocab), oov_token="<OOV>")
-    # tokenizer.fit_on_texts(sentences)  # 构建字典
-    #
-    # seq = tokenizer.texts_to_sequences(sentences)
-    # print(type(seq))
-    #
-    # padded = pad_sequences(seq, padding="post", maxlen=5, truncating="post")
-    # print(padded, type(padded))
+    tk = tf.keras.preprocessing.text.Tokenizer()
+    tk.fit_on_texts(sentences)
+    matrix = tk.sequences_to_matrix(tk.texts_to_sequences(sentences), mode='tfidf')
 
-    tokens = tf.compat.v1.string_split(sentences)
-    print(tokens)
-    indices = tft.compute_and_apply_vocabulary(tokens, top_k=len(vocab))
+    tf_idf = {}
+    for i in range(1, len(matrix[0])):
+        tf_idf[tk.index_word[i]] = sum(matrix[:, i])
 
-    bow_indices, weight = tft.tfidf(indices, len(vocab) + 1)
-
-    print(bow_indices, weight)
+    pickle.dump(sorted(tf_idf.items(), key=lambda x: x[1], reverse=True), open("./reference/tf_idf.pkl", 'wb'))
 
 
-def seed_select(dimension: int):
+def seed_select(dimension: int, weight_schema):
     senti_dic = {}
     with open("./reference/汉语情感词极值表.txt", 'r', encoding='gbk') as f:
         for line in f.readlines():
@@ -97,12 +90,13 @@ def seed_select(dimension: int):
         if emotion_type[0] == 'N':
             senti_dic[word] = float(senti_dic.get(word, 0.0)) - strength
 
-    tf2w = pickle.load(open("./reference/tf2w.pkl", 'rb'))
+    assert weight_schema == 'tf2w' or weight_schema == 'tf_idf', 'you can choose: [tf2w, tf_idf]'
+    weight = pickle.load(open("./reference/"+weight_schema+".pkl", 'rb'))
 
     p_seed_dic = {}
     n_seed_dic = {}
 
-    for t in tf2w[:10000]:
+    for t in weight[:10000]:
         if t[0] not in senti_dic.keys():
             continue
         s = float(senti_dic[t[0]]) * float(t[1])
@@ -129,6 +123,3 @@ def seed_select(dimension: int):
             f.write(tp[0]+"\t"+str(tp[1])+"\n")
         for tp in n_seeds:
             f.write(tp[0]+"\t"+str(tp[1])+"\n")
-
-
-tf_idf("./corpus/hotel/train_cut.txt")

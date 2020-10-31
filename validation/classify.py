@@ -95,7 +95,7 @@ if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
     parse.add_argument("--corpus", type=str, default="hotel", help="specify corpus")
     parse.add_argument("--dic_path", type=str, default="../sv.pkl", help="specify sentiment dictionary")
-    parse.add_argument("--dimension", default=80, type=int,
+    parse.add_argument("--dimension", default=100, type=int,
                        help="dimension of dictionary")
 
     args = parse.parse_args()
