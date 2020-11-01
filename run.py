@@ -10,7 +10,8 @@ from utils import tf2w_dic_build, seed_select, tf2w_calculate, tf_idf_build
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="build sentiment dictionary")
     parse.add_argument("--weight", default=False, help="re-calculate word weight? [True/False]")
-    parse.add_argument("--weight_schema", type=str, default='tf_idf', help="[tf2w, tf-idf]")
+    parse.add_argument("--weight_schema", type=str, default='tf_idf',
+                       help="the way to calculate word weight[tf2w, tf-idf]")
     parse.add_argument("--select_seeds", default=False, help="re-select seeds? [True/False]")
     parse.add_argument("--dimension", default=40, type=int,
                        help="dimension of seeds, [--dimension] positive seeds and [--dimension] negative seeds")
@@ -36,7 +37,7 @@ if __name__ == '__main__':
         for line in f.readlines():
             w, v = line.strip().split("\t")
             seeds.append(w)
-            seeds_weight.append(float(v)/10)
+            seeds_weight.append(float(v)/100)
 
     sv_dic = {}
     assert args.model == 'fasttext' or args.model == 'word2vec', 'you can choose: [word2vec, fasttext]'
@@ -49,7 +50,6 @@ if __name__ == '__main__':
     for tp in tqdm(weight):
         if tp[0] == '':
             continue
-        tf2w_value = float(tp[1])
         sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0]) * float(seeds_weight[i])
                          for i in range(len(seeds))]
 

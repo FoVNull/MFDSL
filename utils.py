@@ -96,27 +96,19 @@ def seed_select(dimension: int, weight_schema):
     p_seed_dic = {}
     n_seed_dic = {}
 
-    for t in weight[:10000]:
+    for t in weight:
         if t[0] not in senti_dic.keys():
             continue
         s = float(senti_dic[t[0]]) * float(t[1])
+        # s = float(senti_dic[t[0]])
         if s > 0:
             p_seed_dic[t[0]] = s
         if s < 0:
             n_seed_dic[t[0]] = s
+        if len(p_seed_dic) == dimension and len(n_seed_dic) == dimension:
+            break
     p_seeds = sorted(p_seed_dic.items(), key=lambda x: x[1], reverse=True)[:dimension]
     n_seeds = sorted(n_seed_dic.items(), key=lambda x: x[1], reverse=False)[:dimension]
-
-    # p_seeds = []
-    # n_seeds = []
-    # for tp in p_sorted:
-    #     p_seeds.append(
-    #         (tp[0], float(senti_dic[tp[0]]))
-    #     )
-    # for tp in n_sorted:
-    #     n_seeds.append(
-    #         (tp[0], float(senti_dic[tp[0]]))
-    #     )
 
     with open("./reference/seeds.tsv", 'w', encoding='utf-8') as f:
         for tp in p_seeds:
