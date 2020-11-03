@@ -20,3 +20,5 @@ reference/wc_model/output
 test
 ft_v.pkl
 *.pkl
+corpus/hotel/ChnSentiCorp_htl_all.csv
+corpus/hotel/ChnSentiCorp_htl_all_cut.txt

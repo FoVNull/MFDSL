@@ -2,9 +2,6 @@ import math
 import pickle
 import pandas as pd
 import tensorflow as tf
-import tensorflow_transform as tft
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 
 def tf2w_dic_build(file: str, others: list):
