@@ -21,8 +21,8 @@ if __name__ == '__main__':
     if args.weight_schema == 'tf2w':
         if args.weight:
             tf2w_dic_build("./corpus/hotel/train_cut.txt",
-                           ["./corpus/test_corpora_cut.txt", "./corpus/smp_cut.txt"])
-    else:
+                           ["./corpus/smp_cut.txt"]) # "./corpus/test_corpora_cut.txt",
+    if args.weight_schema == 'tf_idf':
         if args.weight:
             tf_idf_build("./corpus/hotel/train_cut.txt")
 
