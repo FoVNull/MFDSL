@@ -11,7 +11,7 @@ def fasttext_train(tool):
     if tool == 'fasttext':
         model = FastText(sentences, size=100, window=5, min_count=2, iter=30, min_n=2, max_n=8, word_ngrams=0)
     else:
-        model = word2vec.Word2Vec(sentences, size=200, window=5, min_count=1, iter=30)
+        model = word2vec.Word2Vec(sentences, size=100, window=5, min_count=1, iter=30)
     model.save('../reference/wc_model/output')
 
 
