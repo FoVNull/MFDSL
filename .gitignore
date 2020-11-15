@@ -3,7 +3,6 @@ corpus/all_data_data.json
 corpus/test_corpora.txt
 corpus/usual_eval_data.json
 corpus/virus_eval_data.json
-reference/HIT_stopwords.txt
 reference/wc_model/output.trainables.syn1neg.npy
 reference/wc_model/output.trainables.vectors_ngrams_lockf.npy
 reference/wc_model/output.trainables.vectors_vocab_lockf.npy
@@ -20,5 +19,3 @@ reference/wc_model/output
 test
 ft_v.pkl
 *.pkl
-corpus/hotel/ChnSentiCorp_htl_all.csv
-corpus/hotel/ChnSentiCorp_htl_all_cut.txt
