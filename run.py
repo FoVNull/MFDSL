@@ -10,7 +10,7 @@ if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="build sentiment dictionary")
     parse.add_argument("--weight", default=False, help="re-calculate word weight? [True/False]")
     parse.add_argument("--weight_schema", type=str, default='tf_idf',
-                       help="the way to calculate word weight[tf2w, tf-idf, mix_tf]")
+                       help="the way to calculate word weight[tf2w, tf_idf, mix_tf]")
     parse.add_argument("--select_seeds", default=False, help="re-select seeds? [True/False]")
     parse.add_argument("--dimension", default=40, type=int,
                        help="dimension of seeds, [--dimension] positive seeds and [--dimension] negative seeds")
