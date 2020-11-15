@@ -28,6 +28,9 @@ if __name__ == '__main__':
             tf_idf_build("./corpus/hotel/train_cut.txt")
     if args.weight_schema == 'mix_tf':
         if args.weight:
+            tf2w_dic_build("./corpus/hotel/train_cut.txt",
+                           ["./corpus/smp_cut.txt"]) # "./corpus/test_corpora_cut.txt",
+            tf_idf_build("./corpus/hotel/train_cut.txt")
             mix_tf_build()
 
     weight = pickle.load(open("./reference/"+args.weight_schema+".pkl", 'rb'))
@@ -41,7 +44,7 @@ if __name__ == '__main__':
         for line in f.readlines():
             w, v = line.strip().split("\t")
             seeds.append(w)
-            seeds_weight.append(float(v)/10)
+            seeds_weight.append(float(v))
 
     sv_dic = {}
     assert args.model in ['word2vec', 'fasttext'], 'you can choose: [word2vec, fasttext]'
