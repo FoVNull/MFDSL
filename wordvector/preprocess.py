@@ -4,7 +4,7 @@ import jieba.posseg as pseg
 stop_set = set(line.strip() for line in open("../reference/HIT_stopwords.txt", 'r', encoding='utf-8').readlines())
 word_flag = ['Ag', 'a', 'ad', 'an', 'Dg', 'd', 'f', 'g', 'i', 'l', 'Ng', 'n',
              'nr', 'ns', 'nt', 'nz', 'r', 'Tg', 'u', 'v', 'vd', 'vn', 'z']
-word_flag_reverse = ['u', 'w', 'x', 'p', 'q', 'm', 'e', 'd']
+word_flag_reverse = ['u', 'w', 'x', 'p', 'q', 'm', 'e']
 
 
 def cut_json(path):
