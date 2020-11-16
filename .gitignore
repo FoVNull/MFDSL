@@ -19,3 +19,4 @@ reference/wc_model/output
 test
 ft_v.pkl
 *.pkl
+corpus/covid/weibo.csv
