@@ -66,7 +66,7 @@ def save_data(path, texts):
             f.write(" ".join(text) + "\n")
 
 
-cut_csv("../corpus/hotel/ChnSentiCorp_htl_all.csv")
+# cut_csv("../corpus/hotel/ChnSentiCorp_htl_all.csv")
 cut_tsv("../corpus/hotel/train.tsv")
 cut_words("../corpus/hotel/pos_test.txt")
 cut_words("../corpus/hotel/neg_test.txt")
