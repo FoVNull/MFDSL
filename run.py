@@ -15,6 +15,7 @@ if __name__ == '__main__':
     parse.add_argument("--dimension", default=40, type=int,
                        help="dimension of seeds, [--dimension] positive seeds and [--dimension] negative seeds")
     parse.add_argument("--model", type=str, default='fasttext', help="[word2vec, fasttext]")
+    parse.add_argument("--language", dest="lan", default="zh", help="choose from [zh, en]")
     args = parse.parse_args()
 
     assert args.weight_schema in ['tf2w', 'tf_idf', 'mix_tf'], \
@@ -36,7 +37,7 @@ if __name__ == '__main__':
     weight = pickle.load(open("./reference/"+args.weight_schema+".pkl", 'rb'))
 
     if args.select_seeds:
-        seed_select(args.dimension, args.weight_schema)
+        seed_select(args.dimension, args.weight_schema, args.len)
 
     seeds = []
     seeds_weight = []

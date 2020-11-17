@@ -84,24 +84,27 @@ def mix_tf_build():
     pickle.dump(sorted(mix_tf.items(), key=lambda x: x[1], reverse=True), open("./reference/mix_tf.pkl", 'wb'))
 
 
-def seed_select(dimension: int, weight_schema):
+def seed_select(dimension: int, weight_schema, language):
     senti_dic = {}
     # with open("./reference/汉语情感词极值表.txt", 'r', encoding='gbk') as f:
     #     for line in f.readlines():
     #         w, v = line.strip().split("\t")
     #         senti_dic[w] = float(v)*5
-
-    df = pd.read_excel("./reference/情感词汇本体.xlsx", header=0, keep_default_na=False)
-    for i in range(len(df)):
-        emotion_type = df.iloc[i]['情感分类']
-        strength = df.loc[i, '强度']
-        word = df.loc[i, '词语']
-        if emotion_type == 'PC':
-            continue
-        if emotion_type[0] == 'P':
-            senti_dic[word] = float(senti_dic.get(word, 0.0)) + strength
-        if emotion_type[0] == 'N':
-            senti_dic[word] = float(senti_dic.get(word, 0.0)) - strength
+    assert language in ['zh', 'en'], "only support [zh, en]"
+    if language == 'zh':
+        df = pd.read_excel("./reference/情感词汇本体.xlsx", header=0, keep_default_na=False)
+        for i in range(len(df)):
+            emotion_type = df.iloc[i]['情感分类']
+            strength = df.loc[i, '强度']
+            word = df.loc[i, '词语']
+            if emotion_type == 'PC':
+                continue
+            if emotion_type[0] == 'P':
+                senti_dic[word] = float(senti_dic.get(word, 0.0)) + strength
+            if emotion_type[0] == 'N':
+                senti_dic[word] = float(senti_dic.get(word, 0.0)) - strength
+    if language == 'en':
+        print(1)
 
     assert weight_schema in ['tf2w', 'tf_idf', 'mix_tf'], \
         'you can choose: [tf2w, tf_idf, mix_tf]'
