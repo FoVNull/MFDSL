@@ -1,10 +1,9 @@
-import math
 import pickle
 import pandas as pd
 import tensorflow as tf
 
 
-def tf2w_dic_build(file: str, others: list):
+def mcw_dic_build(file: str, others: list):
     word_dic = {}
     tf = {}
     word_count = 0
@@ -40,12 +39,7 @@ def tf2w_dic_build(file: str, others: list):
             tf2w[k] = tf[k] * (tf_value/0.5)
                       #math.log(0.5*10000/word_count, tf_value)
 
-    pickle.dump(sorted(tf2w.items(), key=lambda x: x[1], reverse=True), open("./reference/tf2w.pkl", 'wb'))
-
-
-def tf2w_calculate():
-    tf2w_dic = pickle.load(open("./reference/tf2w.pkl", 'rb'))
-    print(tf2w_dic[0:10])
+    pickle.dump(sorted(tf2w.items(), key=lambda x: x[1], reverse=True), open("./reference/mcw.pkl", 'wb'))
 
 
 def tf_idf_build(file: str):
@@ -104,10 +98,12 @@ def seed_select(dimension: int, weight_schema, language):
             if emotion_type[0] == 'N':
                 senti_dic[word] = float(senti_dic.get(word, 0.0)) - strength
     if language == 'en':
-        print(1)
+        senti6 = pickle.load(open("./reference/senticnet6.pkl", 'rb'))
+        for tp in senti6.items():
+            senti_dic[tp[0]] = float(tp[1][7]) + senti_dic.get(tp[0], 0.0)
 
-    assert weight_schema in ['tf2w', 'tf_idf', 'mix_tf'], \
-        'you can choose: [tf2w, tf_idf, mix_tf]'
+    assert weight_schema in ['mcw', 'tf_idf', 'mix_tf'], \
+        'you can choose: [mcw, tf_idf, mix_tf]'
     weight = pickle.load(open("./reference/"+weight_schema+".pkl", 'rb'))
 
     p_seed_dic = {}

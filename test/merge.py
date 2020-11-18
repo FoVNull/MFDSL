@@ -1,42 +1,14 @@
-# import os
-# neg_text = set()
-# for i in range(2999):
-#     file = "neg."+str(i)+".txt"
-#     with open("../corpus/hotel/neg/"+file, 'r', encoding='utf-8') as f:
-#         s = "".join([line.strip() for line in f.readlines()])
-#         neg_text.add(s.replace("\n", ""))
-#
-# pos_text = set()
-# for i in range(2999):
-#     file = "pos." + str(i) + ".txt"
-#     with open("../corpus/hotel/pos/"+file, 'r', encoding='utf-8') as f:
-#         s = "".join([line.strip() for line in f.readlines()])
-#         pos_text.add(s.replace("\n", ""))
-#
-# with open("../corpus/hotel/neg.txt", 'w', encoding='utf-8') as f:
-#     for i in neg_text:
-#         if i == "":
-#             continue
-#         f.write(i+"\n")
-#
-# with open("../corpus/hotel/pos.txt", 'w', encoding='utf-8') as f:
-#     for i in pos_text:
-#         if i == "":
-#             continue
-#         f.write(i+"\n")
-pos_text = [line.strip() for line in open("../corpus/hotel/pos.txt", 'r', encoding='utf-8').readlines()]
-neg_text = [line.strip() for line in open("../corpus/hotel/neg.txt", 'r', encoding='utf-8').readlines()]
+import random
+texts = []
+with open("../corpus/classics/classics_en_cut.txt", 'r', encoding='utf-8') as f:
+    for line in f.readlines():
+        texts.append(line.strip())
 
-with open("../corpus/hotel/train.tsv", 'w', encoding='utf-8') as f:
-    for i in pos_text[1000:2000]:
-        f.write(i + "\tp\n")
-    for i in neg_text[1000:2000]:
-        f.write(i + "\tn\n")
+random.shuffle(texts)
 
-with open("../corpus/hotel/neg_test.txt", 'w', encoding='utf-8') as f:
-    for i in neg_text[:1000]+neg_text[2000:]:
+with open("../corpus/classics/classics_en_sv.txt", 'w', encoding='utf-8') as f:
+    for i in texts[:10000]:
         f.write(i+"\n")
-
-with open("../corpus/hotel/pos_test.txt", 'w', encoding='utf-8') as f:
-    for i in pos_text[:1000]+pos_text[2000:]:
+with open("../corpus/classics/classics_en_va.txt", 'w', encoding='utf-8') as f:
+    for i in texts[10000:]:
         f.write(i+"\n")
