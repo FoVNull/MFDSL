@@ -3,7 +3,7 @@ import pandas as pd
 from lxml import etree
 
 
-word_flag = ['ADJ', 'ADV', 'NOUN', 'PROPN', 'VERB', 'X']
+word_flag = ['ADJ', 'ADV', 'NOUN', 'PROPN', 'VERB']
 nlp = en_core_web_lg.load()
 
 
@@ -47,5 +47,5 @@ def save_data(path, texts):
             f.write(" ".join(text) + "\n")
 
 
-# cut_xlsx("../corpus/classics/classics_en.xlsx")
-cut_xml("../corpus/classics/classics.xml")
+cut_xlsx("../corpus/classics/classics_en.xlsx")
+# cut_xml("../corpus/classics/classics.xml")

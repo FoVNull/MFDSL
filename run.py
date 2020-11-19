@@ -28,7 +28,7 @@ if __name__ == '__main__':
     if args.weight_schema == 'tf_idf':
         if args.weight:
             tf_idf_build(args.corpus)
-    if args.weight_schema == 'mix_tf':
+    if args.weight_schema == 'mix':
         if args.weight:
             mcw_dic_build(args.corpus,
                            ["./corpus/smp_cut.txt"]) # "./corpus/test_corpora_cut.txt",
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         for line in f.readlines():
             w, v = line.strip().split("\t")
             seeds.append(w)
-            seeds_weight.append(float(v))
+            seeds_weight.append(float(v)/10)
 
     sv_dic = {}
     assert args.model in ['word2vec', 'fasttext'], 'you can choose: [word2vec, fasttext]'

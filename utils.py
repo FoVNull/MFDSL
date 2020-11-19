@@ -1,6 +1,8 @@
 import pickle
 import pandas as pd
 import tensorflow as tf
+from senticnet.senticnet import SenticNet
+from senticnet.babelsenticnet import BabelSenticNet
 
 
 def mcw_dic_build(file: str, others: list):
@@ -65,7 +67,7 @@ def tf_idf_build(file: str):
 
 
 def mix_tf_build():
-    tf2w = pickle.load(open("./reference/tf2w.pkl", 'rb'))
+    tf2w = pickle.load(open("./reference/mcw.pkl", 'rb'))
     tf_idf = pickle.load(open("./reference/tf_idf.pkl", 'rb'))
 
     mix_tf = {}
@@ -75,17 +77,29 @@ def mix_tf_build():
     for tp in tf_idf:
         mix_tf[tp[0]] = mix_tf.get(tp[0], 1) * tp[1]
 
-    pickle.dump(sorted(mix_tf.items(), key=lambda x: x[1], reverse=True), open("./reference/mix_tf.pkl", 'wb'))
+    pickle.dump(sorted(mix_tf.items(), key=lambda x: x[1], reverse=True), open("./reference/mix.pkl", 'wb'))
 
 
 def seed_select(dimension: int, weight_schema, language):
+    sn = SenticNet()
     senti_dic = {}
-    # with open("./reference/汉语情感词极值表.txt", 'r', encoding='gbk') as f:
-    #     for line in f.readlines():
-    #         w, v = line.strip().split("\t")
-    #         senti_dic[w] = float(v)*5
+    with open("./reference/BosonNLP_sentiment_score.txt", 'r', encoding='UTF-8') as f:
+        for line in f.readlines():
+            if len(line.strip().split(" ")) < 2:
+                continue
+            w, v = line.strip().split(" ")
+            senti_dic[w] = float(v)
+
     assert language in ['zh', 'en'], "only support [zh, en]"
+
     if language == 'zh':
+        bsn = BabelSenticNet('cn')
+        for concept in bsn.data.keys():
+            try:
+                senti_dic[concept] = float(bsn.polarity_value(concept)) + senti_dic.get(concept, 0.0)
+            except KeyError as e:
+                print("unexpected problem! feedback:github.com/FoVNull")
+
         df = pd.read_excel("./reference/情感词汇本体.xlsx", header=0, keep_default_na=False)
         for i in range(len(df)):
             emotion_type = df.iloc[i]['情感分类']
@@ -94,16 +108,19 @@ def seed_select(dimension: int, weight_schema, language):
             if emotion_type == 'PC':
                 continue
             if emotion_type[0] == 'P':
-                senti_dic[word] = float(senti_dic.get(word, 0.0)) + strength
+                senti_dic[word] = float(senti_dic.get(word, 0.0)) + strength/10
             if emotion_type[0] == 'N':
-                senti_dic[word] = float(senti_dic.get(word, 0.0)) - strength
-    if language == 'en':
-        senti6 = pickle.load(open("./reference/senticnet6.pkl", 'rb'))
-        for tp in senti6.items():
-            senti_dic[tp[0]] = float(tp[1][7]) + senti_dic.get(tp[0], 0.0)
+                senti_dic[word] = float(senti_dic.get(word, 0.0)) - strength/10
 
-    assert weight_schema in ['mcw', 'tf_idf', 'mix_tf'], \
-        'you can choose: [mcw, tf_idf, mix_tf]'
+    if language == 'en':
+        for concept in sn.data.keys():
+            try:
+                senti_dic[concept] = float(sn.polarity_value(concept)) + senti_dic.get(concept, 0.0)
+            except KeyError as e:
+                print("unexpected problem! feedback:github.com/FoVNull")
+
+    assert weight_schema in ['mcw', 'tf_idf', 'mix'], \
+        'you can choose: [mcw, tf_idf, mix]'
     weight = pickle.load(open("./reference/"+weight_schema+".pkl", 'rb'))
 
     p_seed_dic = {}
