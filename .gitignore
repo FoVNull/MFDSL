@@ -20,3 +20,12 @@ test
 ft_v.pkl
 *.pkl
 corpus/covid/weibo.csv
+corpus/book/book_review.txt
+corpus/book/book_review_cut.txt
+corpus/all_cut.txt
+corpus/book_review.txt
+corpus/dm_review.txt
+corpus/is_review.txt
+corpus/NYT_comment.txt
+corpus/software_review.txt
+corpus/software_review_cut.txt

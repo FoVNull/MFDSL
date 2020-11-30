@@ -3,6 +3,9 @@ import pandas as pd
 import tensorflow as tf
 from senticnet.senticnet import SenticNet
 from senticnet.babelsenticnet import BabelSenticNet
+from tqdm import tqdm
+import collections
+import math
 
 
 def mcw_dic_build(file: str, others: list):
@@ -46,22 +49,28 @@ def mcw_dic_build(file: str, others: list):
 
 def tf_idf_build(file: str):
     sentences = []
-    vocab = set()
+    doc_f = {}
+    tf_idf = {}
     max_len = 0
     with open(file, 'r', encoding='utf-8') as f:
         for line in f.readlines():
             vocab_list = line.strip().split(" ")
             max_len = max(max_len, len(vocab_list))
             sentences.append(vocab_list)
-            for v in vocab_list:
-                vocab.add(v)
-    tk = tf.keras.preprocessing.text.Tokenizer()
-    tk.fit_on_texts(sentences)
-    matrix = tk.sequences_to_matrix(tk.texts_to_sequences(sentences), mode='tfidf')
-
-    tf_idf = {}
-    for i in range(1, len(matrix[0])):
-        tf_idf[tk.index_word[i]] = sum(matrix[:, i])
+            for v in set(vocab_list):
+                doc_f[v] = doc_f.get(v, 0) + 1
+    # tk = tf.keras.preprocessing.text.Tokenizer()
+    # tk.fit_on_texts(sentences)
+    # matrix = tk.sequences_to_matrix(tk.texts_to_sequences(sentences), mode='tfidf')
+    #
+    # for i in range(1, len(matrix[0])):
+    #     tf_idf[tk.index_word[i]] = sum(matrix[:, i])
+    for vocab_list in tqdm(sentences):
+        counter = collections.Counter(vocab_list)
+        for i in counter.items():
+            tf_ = i[1]/len(vocab_list)
+            idf = math.log(len(sentences)/doc_f[i[0]])
+            tf_idf[i[0]] = tf_idf.get(i[0], 0) + tf_ * idf
 
     pickle.dump(sorted(tf_idf.items(), key=lambda x: x[1], reverse=True), open("./reference/tf_idf.pkl", 'wb'))
 
@@ -83,21 +92,22 @@ def mix_tf_build():
 def seed_select(dimension: int, weight_schema, language):
     sn = SenticNet()
     senti_dic = {}
-    with open("./reference/BosonNLP_sentiment_score.txt", 'r', encoding='UTF-8') as f:
-        for line in f.readlines():
-            if len(line.strip().split(" ")) < 2:
-                continue
-            w, v = line.strip().split(" ")
-            senti_dic[w] = float(v)
 
     assert language in ['zh', 'en'], "only support [zh, en]"
 
     if language == 'zh':
+        with open("./reference/BosonNLP_sentiment_score.txt", 'r', encoding='UTF-8') as f:
+            for line in f.readlines():
+                if len(line.strip().split(" ")) < 2:
+                    continue
+                w, v = line.strip().split(" ")
+                senti_dic[w] = float(v)
+
         bsn = BabelSenticNet('cn')
         for concept in bsn.data.keys():
             try:
                 senti_dic[concept] = float(bsn.polarity_value(concept)) + senti_dic.get(concept, 0.0)
-            except KeyError as e:
+            except KeyError:
                 print("unexpected problem! feedback:github.com/FoVNull")
 
         df = pd.read_excel("./reference/情感词汇本体.xlsx", header=0, keep_default_na=False)
@@ -116,7 +126,7 @@ def seed_select(dimension: int, weight_schema, language):
         for concept in sn.data.keys():
             try:
                 senti_dic[concept] = float(sn.polarity_value(concept)) + senti_dic.get(concept, 0.0)
-            except KeyError as e:
+            except KeyError:
                 print("unexpected problem! feedback:github.com/FoVNull")
 
     assert weight_schema in ['mcw', 'tf_idf', 'mix'], \
@@ -130,7 +140,6 @@ def seed_select(dimension: int, weight_schema, language):
         if t[0] not in senti_dic.keys():
             continue
         s = float(senti_dic[t[0]]) * float(t[1])
-        # s = float(senti_dic[t[0]])
         if s > 0:
             p_seed_dic[t[0]] = s
         if s < 0:

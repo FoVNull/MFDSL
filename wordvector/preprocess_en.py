@@ -1,6 +1,7 @@
 import en_core_web_lg
 import pandas as pd
 from lxml import etree
+import re
 
 
 word_flag = ['ADJ', 'ADV', 'NOUN', 'PROPN', 'VERB']
@@ -39,6 +40,22 @@ def cut_xml(path):
     save_data(path[:-4] + "_cut.txt", cut_text)
 
 
+def cut_txt(path):
+    texts = []
+    with open(path, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            texts.append(line.strip())
+    cut_text = []
+    for doc in nlp.pipe(texts):
+        s = []
+        for token in doc:
+            if not nlp.vocab[token.text].is_stop and token.pos_ in word_flag:
+                s.append(token.text)
+        cut_text.append(s)
+
+    save_data(path[:-4] + "_cut.txt", cut_text)
+
+
 def save_data(path, texts):
     with open(path, 'w', encoding='utf-8') as f:
         for text in texts:
@@ -46,6 +63,7 @@ def save_data(path, texts):
                 continue
             f.write(" ".join(text) + "\n")
 
-
-cut_xlsx("../corpus/classics/classics_en.xlsx")
+# cut_xlsx("../corpus/classics/classics_en.xlsx")
+# cut_txt("../corpus/book/book_review.txt")
+cut_txt("../corpus/NYT_comment.txt")
 # cut_xml("../corpus/classics/classics.xml")

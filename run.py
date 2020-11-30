@@ -4,7 +4,7 @@ from tqdm import tqdm
 from gensim.models import Word2Vec
 from gensim.models import FastText
 
-from utils import mcw_dic_build, seed_select, tf_idf_build, mix_tf_build
+from utils import *
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="build sentiment dictionary")
@@ -20,18 +20,18 @@ if __name__ == '__main__':
     args = parse.parse_args()
 
     assert args.weight_schema in ['mcw', 'tf_idf', 'mix'], \
-        'you can choose: [mcw, tf_idf, mix_tf]'
+        'you can choose: [mcw, tf_idf, mix]'
     if args.weight_schema == 'mcw':
         if args.weight:
             mcw_dic_build(args.corpus,
-                           ["./corpus/smp_cut.txt"]) # "./corpus/test_corpora_cut.txt",
+                           ["./corpus/NYT_comment_cut.txt"])
     if args.weight_schema == 'tf_idf':
         if args.weight:
             tf_idf_build(args.corpus)
     if args.weight_schema == 'mix':
         if args.weight:
             mcw_dic_build(args.corpus,
-                           ["./corpus/smp_cut.txt"]) # "./corpus/test_corpora_cut.txt",
+                           ["./corpus/NYT_comment_cut.txt"])
             tf_idf_build(args.corpus)
             mix_tf_build()
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         for line in f.readlines():
             w, v = line.strip().split("\t")
             seeds.append(w)
-            seeds_weight.append(float(v)/10)
+            seeds_weight.append(float(v)/100)
 
     sv_dic = {}
     assert args.model in ['word2vec', 'fasttext'], 'you can choose: [word2vec, fasttext]'
