@@ -10,7 +10,8 @@ nlp = en_core_web_lg.load()
 
 def cut_xlsx(path):
     df = pd.read_excel(path, header=0)
-    texts = [i for i in df['内容'].values.reshape(-1)]
+    texts = df['内容'].values.reshape(-1).tolist()
+    rates = df['星数'].values.reshape(-1).tolist()
     cut_text = []
     for doc in nlp.pipe(texts):
         s = []
@@ -19,7 +20,7 @@ def cut_xlsx(path):
                 s.append(token.text)
         cut_text.append(s)
 
-    save_data(path[:-5] + "_cut.txt", cut_text)
+    save_data_rates(path[:-5] + "_cut.txt", cut_text, rates)
 
 
 def cut_xml(path):
@@ -63,7 +64,22 @@ def save_data(path, texts):
                 continue
             f.write(" ".join(text) + "\n")
 
-# cut_xlsx("../corpus/classics/classics_en.xlsx")
+
+def save_data_rates(path, texts, rates):
+    skip = []
+    with open(path, 'w', encoding='utf-8') as f:
+        for i in range(len(texts)):
+            if not texts[i]:
+                skip.append(i)
+                continue
+            f.write(" ".join(texts[i]) + "\n")
+    with open("../corpus/classics/rating", 'w', encoding='utf-8') as f:
+        for i in range(len(texts)):
+            if i not in skip:
+                f.write(str(rates[i]) + "\n")
+
+
+cut_xlsx("../corpus/classics/classics_en.xlsx")
 # cut_txt("../corpus/book/book_review.txt")
-cut_txt("../corpus/NYT_comment.txt")
+# cut_txt("../corpus/NYT_comment.txt")
 # cut_xml("../corpus/classics/classics.xml")
