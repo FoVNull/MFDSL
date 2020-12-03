@@ -66,17 +66,11 @@ def save_data(path, texts):
 
 
 def save_data_rates(path, texts, rates):
-    skip = []
     with open(path, 'w', encoding='utf-8') as f:
         for i in range(len(texts)):
             if not texts[i]:
-                skip.append(i)
                 continue
-            f.write(" ".join(texts[i]) + "\n")
-    with open("../corpus/classics/rating", 'w', encoding='utf-8') as f:
-        for i in range(len(texts)):
-            if i not in skip:
-                f.write(str(rates[i]) + "\n")
+            f.write(" ".join(texts[i]) + "\t" + str(rates[i]) + "\n")
 
 
 cut_xlsx("../corpus/classics/classics_en.xlsx")

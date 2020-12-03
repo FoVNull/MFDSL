@@ -35,14 +35,14 @@ if __name__ == '__main__':
             tf_idf_build(args.corpus)
             mix_tf_build()
 
-    weight = pickle.load(open("./reference/"+args.weight_schema+".pkl", 'rb'))
+    weight = pickle.load(open("./reference/output/"+args.weight_schema+".pkl", 'rb'))
 
     if args.select_seeds:
         seed_select(args.dimension, args.weight_schema, args.lan)
 
     seeds = []
     seeds_weight = []
-    with open("./reference/seeds.tsv", 'r', encoding='utf-8') as f:
+    with open("./reference/output/seeds.tsv", 'r', encoding='utf-8') as f:
         for line in f.readlines():
             w, v = line.strip().split("\t")
             seeds.append(w)
@@ -61,4 +61,4 @@ if __name__ == '__main__':
         sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0]) * float(seeds_weight[i])
                          for i in range(len(seeds))]
 
-    pickle.dump(sv_dic, open("sv.pkl", 'wb'))
+    pickle.dump(sv_dic, open("./reference/output/sv.pkl", 'wb'))
