@@ -46,7 +46,7 @@ if __name__ == '__main__':
         for line in f.readlines():
             w, v = line.strip().split("\t")
             seeds.append(w)
-            seeds_weight.append(float(v)/100)
+            seeds_weight.append(float(v))
 
     sv_dic = {}
     assert args.model in ['word2vec', 'fasttext'], 'you can choose: [word2vec, fasttext]'
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     for tp in tqdm(weight):
         if tp[0] == '':
             continue
-        sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0]) * float(seeds_weight[i])
+        sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0]) * float(seeds_weight[i]/1000)
                          for i in range(len(seeds))]
 
     pickle.dump(sv_dic, open("./reference/output/sv.pkl", 'wb'))

@@ -65,17 +65,26 @@ def cut_xml(path):
     tree = etree.parse(path)
     root = tree.getroot()
     comments = root.xpath("//text")
+    rates = root.xpath("//score")
     texts = []
     for comment in comments:
         texts.append([word.word for word in pseg.cut(comment.text.strip(), use_paddle=True)
                       if word.word not in stop_set and word.flag not in word_flag_reverse])
-    save_data(path[:-4] + "_cut.txt", texts)
+    save_data_rates(path[:-4] + "_zh_cut.txt", texts, [rate.text for rate in rates])
 
 
 def save_data(path, texts):
     with open(path, 'w', encoding='utf-8') as f:
         for text in texts:
             f.write(" ".join(text) + "\n")
+
+
+def save_data_rates(path, texts, rates):
+    with open(path, 'w', encoding='utf-8') as f:
+        for i in range(len(texts)):
+            if not texts[i]:
+                continue
+            f.write(" ".join(texts[i]) + "\t" + str(rates[i]) + "\n")
 
 
 cut_xml("../corpus/classics/classics.xml")

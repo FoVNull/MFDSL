@@ -1,5 +1,6 @@
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
+from sklearn.feature_selection import mutual_info_classif
 from sklearn.metrics import *
 import argparse
 import pickle
@@ -39,22 +40,26 @@ class Classifier:
                 vector = senten_vector/count
                 self.train_data.append((vector.tolist(), senti))
 
-    def train(self):
+    def train(self, random_seed) -> float:
         x_train, x_test, y_train, y_test = train_test_split(
             [tp[0] for tp in self.train_data],
             [tp[1] for tp in self.train_data],
-            test_size=0.25, random_state=0
+            test_size=0.3, random_state=random_seed, shuffle=True
         )
+        # res = mutual_info_classif(x_train, y_train, discrete_features=True)
+        # print(res)
         self.model.fit(x_train, y_train)
         print("train acc:", self.model.score(x_train, y_train))
-        self.predict(x_test, y_test)
+        return self.predict(x_test, y_test)
 
-    def predict(self, x, y):
+    def predict(self, x, y) -> float:
         predicted = self.model.predict(x)
-        print("acc:", accuracy_score(y, predicted))
+        acc = accuracy_score(y, predicted)
+        print("acc:", acc)
         evaluate_dimension = ["precision", "recall", "f1", "support"]
 
         labels = ['p', 'n', '3']
+        # labels = ['p', 'n']
         # labels = ['1', '2', '3', '4', '5']
         for i, e in enumerate(precision_recall_fscore_support(y, predicted, labels=labels)):
             print(evaluate_dimension[i], e.tolist())
@@ -62,6 +67,7 @@ class Classifier:
         self.print_score(y, predicted, "micro")
 
         print(confusion_matrix(y, predicted, labels=labels))
+        return acc
 
     @staticmethod
     def print_score(y, predicted, average):
@@ -73,11 +79,15 @@ class Classifier:
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
     parse.add_argument("--corpus", type=str, default="classics/classics_en_cut.txt", help="specify corpus")
-    parse.add_argument("--dic_path", type=str, default="../reference/output/sv.pkl", help="specify sentiment dictionary")
+    parse.add_argument("--dic_path", type=str, default="../reference/output/ft.pkl", help="specify sentiment dictionary")
     parse.add_argument("--dimension", default=100, type=int,
                        help="dimension of dictionary")
 
     args = parse.parse_args()
 
     classifier = Classifier(args)
-    classifier.train()
+    acc_sum = 0
+    for seed in range(10):
+        acc_sum += classifier.train(seed)
+        print('#'*50)
+    print(acc_sum/10)

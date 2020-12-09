@@ -4,7 +4,7 @@ from lxml import etree
 import re
 
 
-word_flag = ['ADJ', 'ADV', 'NOUN', 'PROPN', 'VERB']
+word_flag = ['ADJ', 'ADV', 'INTJ']#, 'NOUN', 'VERB']
 nlp = en_core_web_lg.load()
 
 
