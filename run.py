@@ -5,6 +5,7 @@ from gensim.models import Word2Vec
 from gensim.models import FastText
 
 from utils import *
+from sopmi import SoPmi
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="build sentiment dictionary")
@@ -24,14 +25,15 @@ if __name__ == '__main__':
     if args.weight_schema == 'mcw':
         if args.weight:
             mcw_dic_build(args.corpus,
-                           ["./corpus/NYT_comment_cut.txt"])
+                           ["./corpus/smp_cut.txt"])
     if args.weight_schema == 'tf_idf':
         if args.weight:
             tf_idf_build(args.corpus)
     if args.weight_schema == 'mix':
         if args.weight:
+            # lda_build(args.corpus)
             mcw_dic_build(args.corpus,
-                           ["./corpus/NYT_comment_cut.txt"])
+                           ["./corpus/smp_cut.txt"])
             tf_idf_build(args.corpus)
             mix_tf_build()
 
@@ -49,6 +51,10 @@ if __name__ == '__main__':
             seeds_weight.append(float(v))
 
     sv_dic = {}
+    sp = SoPmi()
+    sp.sopmi()
+
+
     assert args.model in ['word2vec', 'fasttext'], 'you can choose: [word2vec, fasttext]'
     if args.model == 'word2vec':
         model = Word2Vec.load("./reference/wc_model/output")
@@ -58,7 +64,7 @@ if __name__ == '__main__':
     for tp in tqdm(weight):
         if tp[0] == '':
             continue
-        sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0]) * float(seeds_weight[i]/1000)
+        sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0]) * float(seeds_weight[i]/100)
                          for i in range(len(seeds))]
 
     pickle.dump(sv_dic, open("./reference/output/sv.pkl", 'wb'))

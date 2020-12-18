@@ -1,6 +1,5 @@
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
-from sklearn.feature_selection import mutual_info_classif
 from sklearn.metrics import *
 import argparse
 import pickle
@@ -22,11 +21,11 @@ class Classifier:
                     continue
                 data = line.split("\t")[0].split(" ")
                 senti = line.strip().split("\t")[1]
-                if int(senti) < 3:
-                    senti = 'n'
-                else:
-                    if int(senti) > 3:
-                        senti = 'p'
+                # if int(senti) < 3:
+                #     senti = 'n'
+                # else:
+                #     if int(senti) > 3:
+                #         senti = 'p'
 
                 senten_vector = np.array([0.0] * self.args.dimension)
                 count = 0
@@ -46,8 +45,6 @@ class Classifier:
             [tp[1] for tp in self.train_data],
             test_size=0.3, random_state=random_seed, shuffle=True
         )
-        # res = mutual_info_classif(x_train, y_train, discrete_features=True)
-        # print(res)
         self.model.fit(x_train, y_train)
         print("train acc:", self.model.score(x_train, y_train))
         return self.predict(x_test, y_test)
@@ -58,8 +55,8 @@ class Classifier:
         print("acc:", acc)
         evaluate_dimension = ["precision", "recall", "f1", "support"]
 
-        labels = ['p', 'n', '3']
-        # labels = ['p', 'n']
+        # labels = ['p', 'n', '3']
+        labels = ['p', 'n']
         # labels = ['1', '2', '3', '4', '5']
         for i, e in enumerate(precision_recall_fscore_support(y, predicted, labels=labels)):
             print(evaluate_dimension[i], e.tolist())
@@ -78,8 +75,8 @@ class Classifier:
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
-    parse.add_argument("--corpus", type=str, default="classics/classics_en_cut.txt", help="specify corpus")
-    parse.add_argument("--dic_path", type=str, default="../reference/output/ft.pkl", help="specify sentiment dictionary")
+    parse.add_argument("--corpus", type=str, default="hotel/all_cut.tsv", help="specify corpus")
+    parse.add_argument("--dic_path", type=str, default="../reference/output/sv.pkl", help="specify sentiment dictionary")
     parse.add_argument("--dimension", default=100, type=int,
                        help="dimension of dictionary")
 
@@ -87,7 +84,7 @@ if __name__ == '__main__':
 
     classifier = Classifier(args)
     acc_sum = 0
-    for seed in range(10):
+    for seed in range(5):
         acc_sum += classifier.train(seed)
         print('#'*50)
-    print(acc_sum/10)
+    print(acc_sum/5)

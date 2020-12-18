@@ -89,37 +89,15 @@ def mix_tf_build():
     pickle.dump(sorted(mix_tf.items(), key=lambda x: x[1], reverse=True), open("./reference/output/mix.pkl", 'wb'))
 
 
-def lda_build(file):
-    seq = []
-    with open(file, 'r', encoding='utf-8') as f:
-        for line in f.readlines():
-            seq.append(line.strip().split("\t")[0])
-    tf_vectorizer = CountVectorizer(max_df=1.0, min_df=0.1,
-                                    max_features=500)
-    tf = tf_vectorizer.fit_transform(seq)
-    lda = LatentDirichletAllocation(n_components=1,
-                                    max_iter=100,
-                                    learning_method='batch')
-    model = lda.fit(tf)
-    tf_feature_names = tf_vectorizer.get_feature_names()
-
-    print(lda.perplexity(tf))
-
-    for topic_idx, topic in enumerate(model.components_):
-        print("Topic #%d:" % topic_idx)
-        print([(tf_feature_names[i], round(topic[i], 2))
-               for i in topic.argsort()[20::-1]])
-
-
 def seed_select(dimension: int, weight_schema, language):
     sn = SenticNet()
     senti_dic = {}
-    with open("./reference/BosonNLP_sentiment_score.txt", 'r', encoding='UTF-8') as f:
-        for line in f.readlines():
-            if len(line.strip().split(" ")) < 2:
-                continue
-            w, v = line.strip().split(" ")
-            senti_dic[w] = float(v)
+    # with open("./reference/BosonNLP_sentiment_score.txt", 'r', encoding='UTF-8') as f:
+    #     for line in f.readlines():
+    #         if len(line.strip().split(" ")) < 2:
+    #             continue
+    #         w, v = line.strip().split(" ")
+    #         senti_dic[w] = float(v)
 
     assert language in ['zh', 'en'], "only support [zh, en]"
 
@@ -183,6 +161,3 @@ def seed_select(dimension: int, weight_schema, language):
             f.write(tp[0] + "\t" + str(tp[1]) + "\n")
         for tp in sorted(n_seed_dic.items(), key=lambda x: x[1], reverse=False)[:n_len]:
             f.write(tp[0] + "\t" + str(tp[1]) + "\n")
-
-
-# lda_build("./corpus/classics/classics_en_cut.txt")
