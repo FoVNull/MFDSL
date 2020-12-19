@@ -3,8 +3,7 @@ import pandas as pd
 import tensorflow as tf
 from senticnet.senticnet import SenticNet
 from senticnet.babelsenticnet import BabelSenticNet
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.decomposition import LatentDirichletAllocation
+import math
 
 
 def mcw_dic_build(file: str, others: list):
@@ -43,6 +42,10 @@ def mcw_dic_build(file: str, others: list):
             bi_tf[k] = tf_dic[k] * (tf_avg / 0.5)
             # bi_tf[k] = math.log(0.5*1000/word_count, tf_avg)
 
+    # sum_exp = sum([math.exp(v) for v in bi_tf.values()])
+    # for k, v in bi_tf.items():
+    #     bi_tf[k] = math.exp(v)/sum_exp
+
     pickle.dump(sorted(bi_tf.items(), key=lambda x: x[1], reverse=True), open("./reference/output/mcw.pkl", 'wb'))
 
 
@@ -62,8 +65,19 @@ def tf_idf_build(file: str):
     tk.fit_on_texts(sentences)
     matrix = tk.sequences_to_matrix(tk.texts_to_sequences(sentences), mode='tfidf')
 
+    # 每一句都过一层softmax
+    for i in range(len(matrix)):
+        sum_exp = math.exp(sum(matrix[i]))
+        for j in range(len(matrix[0])):
+            matrix[i][j] = math.exp(matrix[i][j])/sum_exp
+
     for i in range(1, len(matrix[0])):
-        tf_idf[tk.index_word[i]] = sum(matrix[:, i])
+        _value = sum(matrix[:, i])
+        tf_idf[tk.index_word[i]] = _value
+
+    # sum_ = sum([math.exp(v) for v in tf_idf.values()])
+    # for k, v in tf_idf.items():
+    #     tf_idf[k] = math.exp(v)/sum_
 
     # for vocab_list in tqdm(sentences):
     #     counter = collections.Counter(vocab_list)
@@ -85,6 +99,11 @@ def mix_tf_build():
 
     for tp in tf_idf:
         mix_tf[tp[0]] = mix_tf.get(tp[0], 1) * tp[1]
+
+    # 加一层softmax
+    # sum_exp = sum([math.exp(v) for v in mix_tf.values()])
+    # for k, v in mix_tf.items():
+    #     mix_tf[k] = math.exp(v)/sum_exp
 
     pickle.dump(sorted(mix_tf.items(), key=lambda x: x[1], reverse=True), open("./reference/output/mix.pkl", 'wb'))
 
@@ -117,9 +136,9 @@ def seed_select(dimension: int, weight_schema, language):
             if emotion_type == 'PC':
                 continue
             if emotion_type[0] == 'P':
-                senti_dic[word] = float(senti_dic.get(word, 0.0)) + strength / 10
+                senti_dic[word] = float(senti_dic.get(word, 0.0)) + strength/10
             if emotion_type[0] == 'N':
-                senti_dic[word] = float(senti_dic.get(word, 0.0)) - strength / 10
+                senti_dic[word] = float(senti_dic.get(word, 0.0)) - strength/10
 
     if language == 'en':
         for concept in sn.data.keys():

@@ -9,7 +9,7 @@ from sopmi import SoPmi
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="build sentiment dictionary")
-    parse.add_argument("--corpus", help="corpus path to train senti dic")
+    parse.add_argument("--corpus", help="corpus path to train senti seeds")
     parse.add_argument("--weight", default=False, help="re-calculate word weight? [True/False]")
     parse.add_argument("--weight_schema", type=str, default='tf_idf',
                        help="the way to calculate word weight[mcw, tf_idf, mix]")
@@ -51,9 +51,6 @@ if __name__ == '__main__':
             seeds_weight.append(float(v))
 
     sv_dic = {}
-    sp = SoPmi()
-    sp.sopmi()
-
 
     assert args.model in ['word2vec', 'fasttext'], 'you can choose: [word2vec, fasttext]'
     if args.model == 'word2vec':
@@ -61,10 +58,13 @@ if __name__ == '__main__':
     if args.model == 'fasttext':
         model = FastText.load("./reference/wc_model/output")
 
+    sopmier = SoPmi("./corpus/hotel/all_cut.tsv", "./reference/output/seeds.tsv")
+
     for tp in tqdm(weight):
         if tp[0] == '':
             continue
-        sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0]) * float(seeds_weight[i]/100)
+        sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0])
+                         * float(seeds_weight[i])/10
                          for i in range(len(seeds))]
 
     pickle.dump(sv_dic, open("./reference/output/sv.pkl", 'wb'))
