@@ -65,14 +65,17 @@ def tf_idf_build(file: str):
     tk.fit_on_texts(sentences)
     matrix = tk.sequences_to_matrix(tk.texts_to_sequences(sentences), mode='tfidf')
 
-    # 每一句都过一层softmax
+    # 每一行都过一层softmax
     for i in range(len(matrix)):
         sum_exp = math.exp(sum(matrix[i]))
         for j in range(len(matrix[0])):
+            if matrix[i][j] == 0:
+                continue
             matrix[i][j] = math.exp(matrix[i][j])/sum_exp
 
     for i in range(1, len(matrix[0])):
         _value = sum(matrix[:, i])
+        print(_value)
         tf_idf[tk.index_word[i]] = _value
 
     # sum_ = sum([math.exp(v) for v in tf_idf.values()])

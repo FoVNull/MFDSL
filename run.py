@@ -64,7 +64,7 @@ if __name__ == '__main__':
         if tp[0] == '':
             continue
         sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0])
-                         * float(seeds_weight[i])/10
+                         * float(seeds_weight[i])
                          for i in range(len(seeds))]
 
     pickle.dump(sv_dic, open("./reference/output/sv.pkl", 'wb'))
