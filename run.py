@@ -58,7 +58,7 @@ if __name__ == '__main__':
     if args.model == 'fasttext':
         model = FastText.load("./reference/wc_model/output")
 
-    sopmier = SoPmi("./corpus/hotel/all_cut.tsv", "./reference/output/seeds.tsv")
+    # sopmier = SoPmi("./corpus/hotel/all_cut.tsv", "./reference/output/seeds.tsv")
 
     for tp in tqdm(weight):
         if tp[0] == '':

@@ -69,13 +69,12 @@ def tf_idf_build(file: str):
     for i in range(len(matrix)):
         sum_exp = math.exp(sum(matrix[i]))
         for j in range(len(matrix[0])):
-            if matrix[i][j] == 0:
-                continue
+            # if matrix[i][j] == 0:
+            #     continue
             matrix[i][j] = math.exp(matrix[i][j])/sum_exp
 
     for i in range(1, len(matrix[0])):
         _value = sum(matrix[:, i])
-        print(_value)
         tf_idf[tk.index_word[i]] = _value
 
     # sum_ = sum([math.exp(v) for v in tf_idf.values()])
@@ -161,6 +160,7 @@ def seed_select(dimension: int, weight_schema, language):
         if t[0] not in senti_dic.keys():
             continue
         s = float(senti_dic[t[0]]) * float(t[1])
+        # s = float(senti_dic[t[0]])
         if s > 0:
             p_seed_dic[t[0]] = s
         if s < 0:
@@ -169,6 +169,8 @@ def seed_select(dimension: int, weight_schema, language):
             break
     p_seeds = sorted(p_seed_dic.items(), key=lambda x: x[1], reverse=True)[:dimension]
     n_seeds = sorted(n_seed_dic.items(), key=lambda x: x[1], reverse=False)[:dimension]
+    # p_seeds = [(i[0], i[1]) for i in p_seed_dic.items()][:dimension]
+    # n_seeds = [(i[0], i[1]) for i in n_seed_dic.items()][:dimension]
 
     with open("./reference/output/seeds.tsv", 'w', encoding='utf-8') as f:
         for tp in p_seeds:
