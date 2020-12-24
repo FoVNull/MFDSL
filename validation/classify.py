@@ -43,7 +43,7 @@ class Classifier:
         x_train, x_test, y_train, y_test = train_test_split(
             [tp[0] for tp in self.train_data],
             [tp[1] for tp in self.train_data],
-            test_size=0.3, random_state=random_seed, shuffle=True
+            test_size=0.5, random_state=random_seed, shuffle=True
         )
         self.model.fit(x_train, y_train)
         print("train acc:", self.model.score(x_train, y_train))
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
     classifier = Classifier(args)
     acc_sum = 0
-    for seed in range(5):
+    for seed in range(2):
         acc_sum += classifier.train(seed)
         print('#'*50)
-    print(acc_sum/5)
+    print(acc_sum/2)
