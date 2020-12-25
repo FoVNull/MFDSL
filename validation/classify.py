@@ -10,7 +10,6 @@ class Classifier:
     def __init__(self, args):
         self.args = args
         self.train_data = []
-        self.load_data()
         self.model = SVC(kernel='linear', probability=True)
 
     def load_data(self):
@@ -76,13 +75,14 @@ class Classifier:
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
     parse.add_argument("--corpus", type=str, default="hotel/all_cut.tsv", help="specify corpus")
-    parse.add_argument("--dic_path", type=str, default="../reference/output/sv.pkl", help="specify sentiment dictionary")
+    parse.add_argument("--dic_path", type=str, default="../reference/output/ft.pkl", help="specify sentiment dictionary")
     parse.add_argument("--dimension", default=100, type=int,
                        help="dimension of dictionary")
 
     args = parse.parse_args()
 
     classifier = Classifier(args)
+    classifier.load_data()
     acc_sum = 0
     for seed in range(2):
         acc_sum += classifier.train(seed)

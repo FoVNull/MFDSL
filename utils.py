@@ -4,6 +4,8 @@ import tensorflow as tf
 from senticnet.senticnet import SenticNet
 from senticnet.babelsenticnet import BabelSenticNet
 import math
+from tqdm import tqdm
+import collections
 
 
 def mcw_dic_build(file: str, others: list):
@@ -61,6 +63,14 @@ def tf_idf_build(file: str):
             sentences.append(vocab_list)
             for v in set(vocab_list):
                 doc_f[v] = doc_f.get(v, 0) + 1
+    # 对照方法 常规tf-idf算法
+    # for vocab_list in tqdm(sentences):
+    #     counter = collections.Counter(vocab_list)
+    #     for i in counter.items():
+    #         tf_ = i[1]/len(vocab_list)
+    #         idf = math.log(len(sentences)/doc_f[i[0]])
+    #         tf_idf[i[0]] = tf_idf.get(i[0], 0) + tf_ * idf
+
     tk = tf.keras.preprocessing.text.Tokenizer()
     tk.fit_on_texts(sentences)
     matrix = tk.sequences_to_matrix(tk.texts_to_sequences(sentences), mode='tfidf')
@@ -76,17 +86,6 @@ def tf_idf_build(file: str):
     for i in range(1, len(matrix[0])):
         _value = sum(matrix[:, i])
         tf_idf[tk.index_word[i]] = _value
-
-    # sum_ = sum([math.exp(v) for v in tf_idf.values()])
-    # for k, v in tf_idf.items():
-    #     tf_idf[k] = math.exp(v)/sum_
-
-    # for vocab_list in tqdm(sentences):
-    #     counter = collections.Counter(vocab_list)
-    #     for i in counter.items():
-    #         tf_ = i[1]/len(vocab_list)
-    #         idf = math.log(len(sentences)/doc_f[i[0]])
-    #         tf_idf[i[0]] = tf_idf.get(i[0], 0) + tf_ * idf
 
     pickle.dump(sorted(tf_idf.items(), key=lambda x: x[1], reverse=True), open("./reference/output/tf_idf.pkl", 'wb'))
 
