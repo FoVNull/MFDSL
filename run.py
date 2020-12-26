@@ -1,11 +1,31 @@
 import argparse
 import pickle
 from tqdm import tqdm
+import numpy as np
 from gensim.models import Word2Vec
 from gensim.models import FastText
 
 from utils import *
 from sopmi import SoPmi
+from validation.wc_validation import Validation
+
+
+class SimCalculator(Validation):
+    def __init__(self):
+        self.senti_vector = {}
+        with open("D:/python/mylibs/sgns.sogou.word", 'r') as f:
+            f.readline()
+            while True:
+                _line = f.readline()
+                if not _line:
+                    break
+                _v = _line.strip().split(" ")
+                self.senti_vector[_v[0]] = np.array(_v[1:301], dtype='float64')
+
+    def senti_sim(self, word1, word2):
+        senti_cos = self.cosine_similarity(self.senti_vector[word1], self.senti_vector[word2])
+        return senti_cos
+
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="build sentiment dictionary")
@@ -59,6 +79,7 @@ if __name__ == '__main__':
         model = FastText.load("./reference/wc_model/output")
 
     # sopmier = SoPmi("./corpus/hotel/all_cut.tsv", "./reference/output/seeds.tsv")
+    # sim_calculator = SimCalculator()
 
     for tp in tqdm(weight):
         if tp[0] == '':
@@ -66,5 +87,4 @@ if __name__ == '__main__':
         sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0])
                          * float(seeds_weight[i])
                          for i in range(len(seeds))]
-
     pickle.dump(sv_dic, open("./reference/output/sv.pkl", 'wb'))

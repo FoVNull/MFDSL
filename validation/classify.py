@@ -13,7 +13,19 @@ class Classifier:
         self.model = SVC(kernel='linear', probability=True)
 
     def load_data(self):
-        senti_vector = pickle.load(open(args.dic_path, 'rb'))
+        senti_vector = {}
+        if args.dic_path == "pretrain":
+            with open("D:/python/mylibs/sgns.sogou.word", 'r') as f:
+                f.readline()
+                while True:
+                    line = f.readline()
+                    if not line:
+                        break
+                    v = line.strip().split(" ")
+                    senti_vector[v[0]] = v[1:301]
+        else:
+            senti_vector = pickle.load(open(args.dic_path, 'rb'))
+            print(senti_vector)
         with open("../corpus/" + self.args.corpus, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 if len(line.strip().split("\t")) < 2:
@@ -75,7 +87,7 @@ class Classifier:
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
     parse.add_argument("--corpus", type=str, default="hotel/all_cut.tsv", help="specify corpus")
-    parse.add_argument("--dic_path", type=str, default="../reference/output/ft.pkl", help="specify sentiment dictionary")
+    parse.add_argument("--dic_path", type=str, default="../reference/output/sv.pkl", help="specify sentiment dictionary")
     parse.add_argument("--dimension", default=100, type=int,
                        help="dimension of dictionary")
 

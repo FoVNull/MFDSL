@@ -30,16 +30,17 @@ class Validation:
         print("senti_vectors: ", most_list)
 
 
-validator = Validation()
-print("肺炎", "愤怒")
-validator.senti_sim("肺炎", "愤怒")
+if __name__ == '__main__':
+    validator = Validation()
+    print("肺炎", "愤怒")
+    validator.senti_sim("肺炎", "愤怒")
 
-print("疫情", "愤怒")
-validator.senti_sim("疫情", "愤怒")
-print("疫情", "高兴")
-validator.senti_sim("疫情", "高兴")
+    print("疫情", "愤怒")
+    validator.senti_sim("疫情", "愤怒")
+    print("疫情", "高兴")
+    validator.senti_sim("疫情", "高兴")
 
-print("医生", "致敬")
-validator.senti_sim("医生", "致敬")
-validator.senti_sim("悲伤", "伤心")
-# validator.most_sim("疫情", number=10)
+    print("医生", "致敬")
+    validator.senti_sim("医生", "致敬")
+    validator.senti_sim("悲伤", "伤心")
+    # validator.most_sim("疫情", number=10)

@@ -21,5 +21,3 @@ if __name__ == '__main__':
 
     args = parse.parse_args()
     # fasttext_train(args.model)
-    with open("D:/python/mylibs/cc.zh.300.vec", 'r') as f:
-        print(f.read())
