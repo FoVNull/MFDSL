@@ -23,7 +23,8 @@ def cut_words(path, p):
             texts.append([word.word for word in pseg.cut(line.strip(), use_paddle=True)
                           if word.word not in stop_set and word.flag in word_flag])
 
-    save_data_rates(path[:-4] + "_cut.txt", texts,  [p]*len(texts))
+    # save_data_rates(path[:-4] + "_cut.txt", texts,  [p]*len(texts))
+    save_data(path[:-4] + "_cut.txt", texts)
 
 
 def cut_csv(path):
@@ -60,16 +61,19 @@ def merge_corpus(path1, path2, save_path):
             f.write(text)
 
 
-def cut_xml(path):
-    tree = etree.parse(path)
+def cut_xml(path, tag):
+    tree = etree.parse(path, parser=etree.HTMLParser(encoding='utf-8'))
     root = tree.getroot()
-    comments = root.xpath("//text")
-    rates = root.xpath("//score")
+    comments = root.xpath(tag)
+    # rates = root.xpath("//score")
     texts = []
     for comment in comments:
+        if comment.text is None:
+            continue
         texts.append([word.word for word in pseg.cut(comment.text.strip(), use_paddle=True)
-                      if word.word not in stop_set and word.flag in word_flag])
-    save_data_rates(path[:-4] + "_zh_cut.txt", texts, [rate.text for rate in rates])
+                      if word.word not in stop_set])
+    # save_data_rates(path[:-4] + "_zh_cut.txt", texts, [rate.text for rate in rates])
+    save_data(path[:-4] + ".txt", texts)
 
 
 def save_data(path, texts):
@@ -86,10 +90,14 @@ def save_data_rates(path, texts, rates):
             f.write(" ".join(texts[i]) + "\t" + str(rates[i]) + "\n")
 
 
-# cut_xml("../corpus/classics/classics.xml")
-# cut_csv("../corpus/hotel/ChnSentiCorp_htl_all.csv")
+# cut_xml("../corpus/classics/classics.xml", "//text")
 # cut_tsv("../corpus/hotel/train.tsv")
-cut_words("../corpus/hotel/pos.txt", 'p')
-cut_words("../corpus/hotel/neg.txt", 'n')
+# cut_words("../corpus/hotel/pos.txt", 'p')
+# cut_words("../corpus/hotel/neg.txt", 'n')
 # cut_json("../corpus/all_data_data.json")
-merge_corpus("../corpus/hotel/neg_cut.txt", "../corpus/hotel/pos_cut.txt", "../corpus/hotel/all_cut.tsv")
+# cut_words("../corpus/hotel/all.txt", 'p')
+# merge_corpus("../corpus/hotel/neg_cut.txt", "../corpus/hotel/pos_cut.txt", "../corpus/hotel/all_cut.tsv")
+# merge_corpus("../corpus/hotel/neg.txt", "../corpus/hotel/pos.txt", "../corpus/hotel/all.txt")
+# cut_xml("../corpus/NLPIR_weibo.xml", "//article")
+merge_corpus("../corpus/hotel/all4train.txt", "../corpus/NLPIR_weibo.txt", "../corpus/zh_train.txt")
+

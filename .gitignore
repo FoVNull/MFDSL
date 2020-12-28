@@ -29,3 +29,5 @@ corpus/is_review.txt
 corpus/NYT_comment.txt
 corpus/software_review.txt
 corpus/software_review_cut.txt
+corpus/NLPIR_weibo.txt
+corpus/zh_train.txt

@@ -23,8 +23,7 @@ class SimCalculator(Validation):
                 self.senti_vector[_v[0]] = np.array(_v[1:301], dtype='float64')
 
     def senti_sim(self, word1, word2):
-        senti_cos = self.cosine_similarity(self.senti_vector[word1], self.senti_vector[word2])
-        return senti_cos
+        return self.cosine_similarity(self.senti_vector[word1], self.senti_vector[word2])
 
 
 if __name__ == '__main__':
