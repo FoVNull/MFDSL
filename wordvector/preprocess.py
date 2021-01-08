@@ -99,5 +99,12 @@ def save_data_rates(path, texts, rates):
 # merge_corpus("../corpus/hotel/neg_cut.txt", "../corpus/hotel/pos_cut.txt", "../corpus/hotel/all_cut.tsv")
 # merge_corpus("../corpus/hotel/neg.txt", "../corpus/hotel/pos.txt", "../corpus/hotel/all.txt")
 # cut_xml("../corpus/NLPIR_weibo.xml", "//article")
-merge_corpus("../corpus/hotel/all4train.txt", "../corpus/NLPIR_weibo.txt", "../corpus/zh_train.txt")
+# merge_corpus("../corpus/hotel/all4train.txt", "../corpus/NLPIR_weibo.txt", "../corpus/zh_train.txt")
+cut_words("../corpus/hotel/all4000.txt", 'p')
+text = [line.strip() for line in open("../corpus/hotel/all4000_cut.txt")]
+with open("../corpus/hotel/test4000.tsv", 'w', encoding='utf-8') as f:
+    for i in text[:2000]:
+        f.write(i+"\tn\n")
+    for i in text[2000:]:
+        f.write(i+"\tp\n")
 

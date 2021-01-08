@@ -38,15 +38,24 @@ class DUT(Classifier):
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
-    parse.add_argument("--corpus", type=str, default="hotel/all_cut.tsv", help="specify corpus")
+    parse.add_argument("--corpus", type=str, default="hotel/test4000.tsv", help="specify corpus")
+    parse.add_argument("--random_count", dest="count", default=10)
 
     args = parse.parse_args()
 
     classifier = DUT(args)
     classifier.load_data()
-    print(classifier.train_data[:3])
     acc_sum = 0
-    for seed in range(2):
-        acc_sum += classifier.train(seed)
+    eva_sum = [[0, 0], [0, 0], [0, 0]]
+    for seed in range(args.count):
+        _eva, _acc = classifier.train(seed)
+        for i in range(3):
+            eva_sum[i][0] += _eva[i][0]
+            eva_sum[i][1] += _eva[i][1]
+        acc_sum += _acc
         print('#'*50)
-    print(acc_sum/2)
+    legend = ["precision", "recall", "f1"]
+    for i in range(legend):
+        value = [eva_sum[i][0]/args.count, eva_sum[i][1]/args.count]
+        print(legend[i], value, sum(value)/2)
+    print(acc_sum/args.count)

@@ -6,6 +6,7 @@ from senticnet.babelsenticnet import BabelSenticNet
 import math
 from tqdm import tqdm
 import collections
+import numpy as np
 
 
 def mcw_dic_build(file: str, others: list):
@@ -56,9 +57,12 @@ def tf_idf_build(file: str):
     doc_f = {}
     tf_idf = {}
     max_len = 0
+    _lexicon = set()
     with open(file, 'r', encoding='utf-8') as f:
         for line in f.readlines():
             vocab_list = line.strip().split("\t")[0].split(" ")
+            for w in vocab_list:
+                _lexicon.add(w)
             max_len = max(max_len, len(vocab_list))
             sentences.append(vocab_list)
             for v in set(vocab_list):
@@ -71,6 +75,27 @@ def tf_idf_build(file: str):
     #         idf = math.log(len(sentences)/doc_f[i[0]])
     #         tf_idf[i[0]] = tf_idf.get(i[0], 0) + tf_ * idf
 
+    # tf-igm
+    # f_list = {}
+    # for vocab_list in sentences:
+    #     counter = collections.Counter(vocab_list)
+    #     for v in _lexicon:
+    #         if v in f_list.keys():
+    #             f_list[v].append(counter[v]/len(vocab_list))
+    #         else:
+    #             f_list[v] = [counter.get(v, 0)]
+    # igm = {}
+    # for k, v in f_list.items():
+    #     gravity_arg = list(reversed(np.argsort(v)))
+    #     sum_ = sum([v[g] * (i+1) for i, g in enumerate(gravity_arg)])
+    #     igm[k] = v[gravity_arg[0]] / sum_
+    #
+    # for vocab_list in tqdm(sentences):
+    #     counter = collections.Counter(vocab_list)
+    #     for i in counter.items():
+    #         tf_ = i[1]/len(vocab_list)
+    #         tf_idf[i[0]] = tf_idf.get(i[0], 0) + tf_ * igm[i[0]]
+
     tk = tf.keras.preprocessing.text.Tokenizer()
     tk.fit_on_texts(sentences)
     matrix = tk.sequences_to_matrix(tk.texts_to_sequences(sentences), mode='tfidf')
@@ -79,8 +104,8 @@ def tf_idf_build(file: str):
     for i in range(len(matrix)):
         sum_exp = math.exp(sum(matrix[i]))
         for j in range(len(matrix[0])):
-            if matrix[i][j] == 0:
-                continue
+            # if matrix[i][j] == 0:
+            #     continue
             matrix[i][j] = math.exp(matrix[i][j])/sum_exp
 
     for i in range(1, len(matrix[0])):
@@ -178,8 +203,8 @@ def seed_select(dimension: int, weight_schema, language):
             f.write(tp[0] + "\t" + str(tp[1]) + "\n")
 
     with open("./reference/output/vocab.tsv", 'w', encoding='utf-8') as f:
-        p_len = int(len(p_seed_dic) * 0.3)
-        n_len = int(len(n_seed_dic) * 0.3)
+        p_len = int(len(p_seed_dic) * 0.8)
+        n_len = int(len(n_seed_dic) * 0.8)
         for tp in sorted(p_seed_dic.items(), key=lambda x: x[1], reverse=True)[:p_len]:
             f.write(tp[0] + "\t" + str(tp[1]) + "\n")
         for tp in sorted(n_seed_dic.items(), key=lambda x: x[1], reverse=False)[:n_len]:
