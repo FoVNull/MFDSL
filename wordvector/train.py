@@ -7,7 +7,7 @@ import argparse
 def fasttext_train(tool):
     assert tool == 'fasttext' or tool == 'word2vec', 'you can choose: [word2vec, fasttext]'
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-    sentences = word2vec.LineSentence(u'../corpus/hotel_en/all4train.txt')
+    sentences = word2vec.LineSentence(u'../corpus/amazon/book/all.txt')
     if tool == 'fasttext':
         model = FastText(sentences, size=100, window=5, min_count=2, iter=30, min_n=2, max_n=8, word_ngrams=0)
     else:

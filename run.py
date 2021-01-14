@@ -41,7 +41,7 @@ if __name__ == '__main__':
 
     irre_c = ["./corpus/smp_cut.txt"]
     if args.lan == "en":
-        irre_c = ["./corpus/NYT_comment_cut/txt"]
+        irre_c = ["./corpus/NYT_comment.txt"]
 
     assert args.weight_schema in ['mcw', 'tf_idf', 'mix'], \
         'you can choose: [mcw, tf_idf, mix]'
@@ -85,6 +85,6 @@ if __name__ == '__main__':
         if tp[0] == '':
             continue
         sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0])
-                         * float(seeds_weight[i]) / 100
+                         * float(seeds_weight[i])
                          for i in range(len(seeds))]
     pickle.dump(sv_dic, open("./reference/output/sv.pkl", 'wb'))

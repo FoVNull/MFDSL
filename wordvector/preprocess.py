@@ -21,7 +21,7 @@ def cut_words(path, p):
     with open(path, 'r', encoding='utf-8') as f:
         for line in f.readlines():
             texts.append([word.word for word in pseg.cut(line.strip(), use_paddle=True)
-                          if word.word not in stop_set and word.flag in word_flag])
+                          if word.word not in stop_set])
 
     # save_data_rates(path[:-4] + "_cut.txt", texts,  [p]*len(texts))
     save_data(path[:-4] + "_cut.txt", texts)
@@ -102,7 +102,7 @@ def save_data_rates(path, texts, rates):
 # merge_corpus("../corpus/hotel/all4train.txt", "../corpus/NLPIR_weibo.txt", "../corpus/zh_train.txt")
 cut_words("../corpus/hotel/all4000.txt", 'p')
 text = [line.strip() for line in open("../corpus/hotel/all4000_cut.txt")]
-with open("../corpus/hotel/test4000.tsv", 'w', encoding='utf-8') as f:
+with open("../corpus/hotel/test4000_non.tsv", 'w', encoding='utf-8') as f:
     for i in text[:2000]:
         f.write(i+"\tn\n")
     for i in text[2000:]:

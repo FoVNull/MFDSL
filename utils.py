@@ -101,11 +101,11 @@ def tf_idf_build(file: str):
     matrix = tk.sequences_to_matrix(tk.texts_to_sequences(sentences), mode='tfidf')
 
     # 每一行都过一层softmax
-    for i in range(len(matrix)):
+    for i in tqdm(range(len(matrix))):
         sum_exp = math.exp(sum(matrix[i]))
         for j in range(len(matrix[0])):
-            # if matrix[i][j] == 0:
-            #     continue
+            if matrix[i][j] == 0:
+                continue
             matrix[i][j] = math.exp(matrix[i][j])/sum_exp
 
     for i in range(1, len(matrix[0])):
@@ -169,7 +169,9 @@ def seed_select(dimension: int, weight_schema, language):
     if language == 'en':
         for concept in sn.data.keys():
             try:
-                senti_dic[concept] = float(sn.polarity_value(concept)) + senti_dic.get(concept, 0.0)
+                if concept == "helpful":
+                    continue
+                senti_dic[concept] = float(sn.polarity_value(concept)) * 10 + senti_dic.get(concept, 0.0)
             except KeyError:
                 print("unexpected problem! feedback:github.com/FoVNull")
 
