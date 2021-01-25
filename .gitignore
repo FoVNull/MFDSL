@@ -29,3 +29,9 @@ corpus/is_review.txt
 corpus/NYT_comment.txt
 corpus/software_review.txt
 corpus/software_review_cut.txt
+corpus/NLPIR_weibo.txt
+corpus/zh_train.txt
+corpus/hotel_en/validation10000.tsv
+corpus/hotel_en/pos.txt
+corpus/hotel_en/neg.txt
+corpus/amazon

@@ -4,7 +4,7 @@ from lxml import etree
 import re
 
 
-word_flag = ['ADJ', 'ADV']#, 'NOUN', 'VERB', 'INTJ']
+word_flag = ['ADJ', 'ADV', 'INTJ']#, 'NOUN', 'VERB', 'INTJ']
 nlp = en_core_web_lg.load()
 
 
@@ -73,7 +73,33 @@ def save_data_rates(path, texts, rates):
             f.write(" ".join(texts[i]) + "\t" + str(rates[i]) + "\n")
 
 
-cut_xlsx("../corpus/classics/classics_en.xlsx")
+def merge(path1, path2, save_path, save_path2):
+    content = [(line.strip(), 'p') for line in open(path1, 'r', encoding='utf-8').readlines()] + \
+    [(line.strip(), 'n') for line in open(path2, 'r', encoding='utf-8').readlines()]
+    with open(save_path, 'w', encoding='utf-8') as f:
+        for c in content:
+            f.write(c[0]+"\t"+c[1]+"\n")
+
+    with open(save_path2, 'w', encoding='utf-8') as f:
+        for c in content[:1000]+content[-1000:]:
+            f.write(c[0]+"\t"+c[1]+"\n")
+
+# merge("../corpus/amazon/book/review_positive_cut.txt", "../corpus/amazon/book/review_negative_cut.txt", "../corpus/amazon/book/vali6000.tsv")
+# cut_xlsx("../corpus/classics/classics_en.xlsx")
 # cut_txt("../corpus/book/book_review.txt")
 # cut_txt("../corpus/NYT_comment.txt")
 # cut_xml("../corpus/classics/classics.xml")
+
+
+for domain in ['dvd', 'electronics', 'kitchen', 'video']:
+    print(domain)
+    cut_txt("../corpus/amazon/"+domain+"/all.txt")
+    cut_txt("../corpus/amazon/"+domain+"/review_positive.txt")
+    cut_txt("../corpus/amazon/"+domain+"/review_negative.txt")
+    merge("../corpus/amazon/"+domain+"/review_positive_cut.txt",
+          "../corpus/amazon/"+domain+"/review_negative_cut.txt", "../corpus/amazon/"+domain+"/vali6000.tsv",
+          "../corpus/amazon/"+domain+"/vali2000.tsv")
+
+
+
+

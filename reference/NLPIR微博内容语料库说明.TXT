@@ -1,0 +1,38 @@
+﻿			NLPIR微博内容语料库说明
+1.NLPIR微博内容语料库由北京理工大学网络搜索挖掘与安全实验室张华平博士，通过公开采集与抽取从新浪微博、腾讯微博中获得。为了推进微博计算的研究，现通过自然语言处理与信息检索共享平台(www.nlpir.org)予以公开共享其中的23万条数据（目前已有数据接近1000万，已经剔除了大量的冗余数据）。
+2.本语料库在公开过程中，已经最大限度地采用技术手段屏蔽了用户真实姓名和url，如果涉及到的用户需要全面保护个人隐私的，可以Email给张华平博士kevinzhang@bit.edu.cn予以删除，对给您造成的困扰表示抱歉，并希望谅解；
+3.只适用于科研教学用途，不得作为商用；引用本语料库，恭请在软件或者论文等成果特定位置表明出处为：NLPIR微博语料库，出处为自然语言处理与信息检索共享平台(http://www.nlpir.org/)。
+4.字段说明：
+id		文章编号
+article		正文
+discuss		评论数目
+insertTime	正文插入时间
+origin		来源
+person_id	所属人物的id
+time		正文发布时间
+transmit	转发
+
+联系方式
+	张华平 博士 副研究员 硕导
+北京理工大学网络搜索挖掘与安全实验室 主任
+地址：北京海淀区中关村南大街5号 100081
+电话：+86-10-68918642
+Email:kevinzhang@bit.edu.cn
+MSN:  pipy_zhang@msn.com;
+网站: http://www.nlpir.org (自然语言处理与信息检索共享平台)
+博客:http://hi.baidu.com/drkevinzhang/
+微博:http://www.weibo.com/drkevinzhang/
+ 
+Dr. Kevin Zhang  (张华平，Zhang Hua-Ping)
+Associate Professor, Graduate Supervisor
+Director, Web Search,Mining and Security Lab.
+Beijing Institute of Technology 
+Add: No.5, South St.,Zhongguancun,Haidian District,Beijing,P.R.C  PC:100081
+Tel: +86-10-68918642
+Email:kevinzhang@bit.edu.cn
+MSN:  pipy_zhang@msn.com;
+Website: http://www.nlpir.org (Natural Language Processing and Information Retrieval Sharing Platform)
+Blog:http://hi.baidu.com/drkevinzhang/
+Twitter: http://www.weibo.com/drkevinzhang/
+
+

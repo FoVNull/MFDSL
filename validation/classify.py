@@ -13,6 +13,7 @@ class Classifier:
         self.model = SVC(kernel='linear', probability=True)
 
     def load_data(self):
+        senti_vector = {}
         senti_vector = pickle.load(open(args.dic_path, 'rb'))
         with open("../corpus/" + self.args.corpus, 'r', encoding='utf-8') as f:
             for line in f.readlines():
@@ -38,17 +39,17 @@ class Classifier:
                 vector = senten_vector/count
                 self.train_data.append((vector.tolist(), senti))
 
-    def train(self, random_seed) -> float:
+    def train(self, random_seed):
         x_train, x_test, y_train, y_test = train_test_split(
             [tp[0] for tp in self.train_data],
             [tp[1] for tp in self.train_data],
-            test_size=0.5, random_state=random_seed, shuffle=True
+            test_size=0.9, random_state=random_seed, shuffle=True
         )
         self.model.fit(x_train, y_train)
         print("train acc:", self.model.score(x_train, y_train))
         return self.predict(x_test, y_test)
 
-    def predict(self, x, y) -> float:
+    def predict(self, x, y):
         predicted = self.model.predict(x)
         acc = accuracy_score(y, predicted)
         print("acc:", acc)
@@ -57,13 +58,15 @@ class Classifier:
         # labels = ['p', 'n', '3']
         labels = ['p', 'n']
         # labels = ['1', '2', '3', '4', '5']
+        eva = []
         for i, e in enumerate(precision_recall_fscore_support(y, predicted, labels=labels)):
+            eva.append(e.tolist())
             print(evaluate_dimension[i], e.tolist())
         self.print_score(y, predicted, "macro")
         self.print_score(y, predicted, "micro")
 
         print(confusion_matrix(y, predicted, labels=labels))
-        return acc
+        return eva, acc
 
     @staticmethod
     def print_score(y, predicted, average):
@@ -74,17 +77,27 @@ class Classifier:
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
-    parse.add_argument("--corpus", type=str, default="hotel/all_cut.tsv", help="specify corpus")
-    parse.add_argument("--dic_path", type=str, default="../reference/output/ft.pkl", help="specify sentiment dictionary")
-    parse.add_argument("--dimension", default=100, type=int,
+    parse.add_argument("--corpus", type=str, default="amazon/book/vali2000.tsv", help="specify corpus")
+    parse.add_argument("--dic_path", type=str, default="../reference/output/glove.pkl", help="specify sentiment dictionary")
+    parse.add_argument("--dimension", default=25, type=int,
                        help="dimension of dictionary")
+    parse.add_argument("--random_count", dest="count", default=10)
 
     args = parse.parse_args()
 
     classifier = Classifier(args)
     classifier.load_data()
     acc_sum = 0
-    for seed in range(2):
-        acc_sum += classifier.train(seed)
+    eva_sum = [[0, 0], [0, 0], [0, 0]]
+    for seed in range(args.count):
+        _eva, _acc = classifier.train(seed)
+        for i in range(3):
+            eva_sum[i][0] += _eva[i][0]
+            eva_sum[i][1] += _eva[i][1]
+        acc_sum += _acc
         print('#'*50)
-    print(acc_sum/2)
+    legend = ["precision", "recall", "f1"]
+    for i in range(3):
+        value = [eva_sum[i][0]/args.count, eva_sum[i][1]/args.count]
+        print(legend[i], value, sum(value)/2)
+    print(acc_sum/args.count)

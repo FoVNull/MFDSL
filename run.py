@@ -1,11 +1,30 @@
 import argparse
 import pickle
 from tqdm import tqdm
+import numpy as np
 from gensim.models import Word2Vec
 from gensim.models import FastText
 
 from utils import *
 from sopmi import SoPmi
+from validation.wc_validation import Validation
+
+
+# class SimCalculator(Validation):
+#     def __init__(self):
+#         self.senti_vector = {}
+#         with open("D:/python/mylibs/sgns.sogou.word", 'r') as f:
+#             f.readline()
+#             while True:
+#                 _line = f.readline()
+#                 if not _line:
+#                     break
+#                 _v = _line.strip().split(" ")
+#                 self.senti_vector[_v[0]] = np.array(_v[1:301], dtype='float64')
+#
+#     def senti_sim(self, word1, word2):
+#         return self.cosine_similarity(self.senti_vector[word1], self.senti_vector[word2])
+
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="build sentiment dictionary")
@@ -20,26 +39,27 @@ if __name__ == '__main__':
     parse.add_argument("--language", dest="lan", default="zh", help="choose from [zh, en]")
     args = parse.parse_args()
 
+    irre_c = ["./corpus/smp_cut.txt"]
+    if args.lan == "en":
+        irre_c = ["./corpus/NYT_comment.txt"]
+
     assert args.weight_schema in ['mcw', 'tf_idf', 'mix'], \
         'you can choose: [mcw, tf_idf, mix]'
     if args.weight_schema == 'mcw':
-        if args.weight:
-            mcw_dic_build(args.corpus,
-                           ["./corpus/smp_cut.txt"])
+        if args.weight == "True":
+            mcw_dic_build(args.corpus, irre_c)
     if args.weight_schema == 'tf_idf':
-        if args.weight:
+        if args.weight == "True":
             tf_idf_build(args.corpus)
     if args.weight_schema == 'mix':
-        if args.weight:
-            # lda_build(args.corpus)
-            mcw_dic_build(args.corpus,
-                           ["./corpus/smp_cut.txt"])
+        if args.weight == "True":
+            mcw_dic_build(args.corpus, irre_c)
             tf_idf_build(args.corpus)
             mix_tf_build()
 
     weight = pickle.load(open("./reference/output/"+args.weight_schema+".pkl", 'rb'))
 
-    if args.select_seeds:
+    if args.select_seeds == "True":
         seed_select(args.dimension, args.weight_schema, args.lan)
 
     seeds = []
@@ -59,12 +79,12 @@ if __name__ == '__main__':
         model = FastText.load("./reference/wc_model/output")
 
     # sopmier = SoPmi("./corpus/hotel/all_cut.tsv", "./reference/output/seeds.tsv")
+    # sim_calculator = SimCalculator()
 
     for tp in tqdm(weight):
         if tp[0] == '':
             continue
         sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0])
-                         * float(seeds_weight[i])
+                         * float(seeds_weight[i]) / 10
                          for i in range(len(seeds))]
-
     pickle.dump(sv_dic, open("./reference/output/sv.pkl", 'wb'))
