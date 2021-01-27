@@ -1,18 +1,17 @@
-# COVIDSentiDic
-### Sentiment Dictionary from comments about COVID-19
+# MCBSL
+## Sentiment_Lexicon generate method for specific domin. --Based on muti-domin corpus.
 
-
-|     |pos precision(%)|pos recall(%)|pos f1(%)|neg precision(%)|neg recall(%)|neg f1(%)|overall acc(%)|
-|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-|DUT|70.02|75.66|72.73|79.68|74.66|77.09|75.10|
-|word2vec|79.32|80.81|80.06|83.01|81.65|82.32|81.26|
-|fasttext|80.48|81.48|80.97|83.48|82.57|83.02|82.06|
-|SentiDic|83.93|81.68|82.79|83.01|85.14|84.06|83.45|
-
-|领域性计算方法|pos precision(%)|pos recall(%)|pos f1(%)|neg precision(%)|neg recall(%)|neg f1(%)|overall acc(%)|
-|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-|TF-IDF|78.79|81.87|80.29|84.26|81.49|82.85|81.66|
-|多语料方法|80.02|82.55|81.26|84.74|82.45|83.58|82.50|
-|TF-IDF 融入多语料|83.93|81.68|82.79|83.01|85.14|84.06|83.45|
-
+> ## 项目结构
+>- /corpus：训练语料  
+>- /reference： 参考资料
+>>- /output：各个过程的输出结果  
+>>- /wc_output：词向量训练结果  
+>- /validation：不同的文本表示方法进行验证  
+>>- bert.py 使用预训练bert(bert-with-service必须 & tensorflow==1.1x)
+>>- one_hot.py 使用one_hot进行文本表示(基于情感词典)
+>>- classify.py 使用MCBSL、词向量进行文本表示。
+>- /test 测试文件夹
+>- sopmi.py 提供sopmi值的计算
+>- run.py 项目入口
+>- utils.py 主要业务逻辑
  
