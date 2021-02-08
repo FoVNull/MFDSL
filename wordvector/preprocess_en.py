@@ -4,7 +4,7 @@ from lxml import etree
 import re
 
 
-word_flag = ['ADJ', 'ADV', 'INTJ']#, 'NOUN', 'VERB', 'INTJ']
+word_flag = ['ADJ', 'ADV', 'INTJ', 'NOUN', 'VERB']#, 'NOUN', 'VERB', 'INTJ']
 nlp = en_core_web_lg.load()
 
 
@@ -93,7 +93,7 @@ def merge(path1, path2, save_path, save_path2):
 
 for domain in ['dvd', 'electronics', 'kitchen', 'video']:
     print(domain)
-    cut_txt("../corpus/amazon/"+domain+"/all.txt")
+    # cut_txt("../corpus/amazon/"+domain+"/all.txt")
     cut_txt("../corpus/amazon/"+domain+"/review_positive.txt")
     cut_txt("../corpus/amazon/"+domain+"/review_negative.txt")
     merge("../corpus/amazon/"+domain+"/review_positive_cut.txt",

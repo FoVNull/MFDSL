@@ -7,7 +7,7 @@ import pickle
 class Validation:
     def __init__(self):
         self.model = FastText.load("../reference/wc_model/output")
-        self.senti_vector = pickle.load(open("../sv.pkl", 'rb'))
+        # self.senti_vector = pickle.load(open("../sv.pkl", 'rb'))
 
     @staticmethod
     def cosine_similarity(x, y):
@@ -18,8 +18,8 @@ class Validation:
     def senti_sim(self, word1, word2):
         print("word vectors: ", self.model.wv.similarity(word1, word2))
 
-        senti_cos = self.cosine_similarity(self.senti_vector[word1], self.senti_vector[word2])
-        print("senti_vectors: ", senti_cos)
+        # senti_cos = self.cosine_similarity(self.senti_vector[word1], self.senti_vector[word2])
+        # print("senti_vectors: ", senti_cos)
 
     def most_sim(self, word, number):
         print("word vectors: ", self.model.wv.most_similar(word, topn=number))
@@ -33,14 +33,15 @@ class Validation:
 if __name__ == '__main__':
     validator = Validation()
     print("肺炎", "愤怒")
-    validator.senti_sim("肺炎", "愤怒")
+    validator.senti_sim("不错", "不差")
+    validator.senti_sim("不错", "好")
 
-    print("疫情", "愤怒")
-    validator.senti_sim("疫情", "愤怒")
-    print("疫情", "高兴")
-    validator.senti_sim("疫情", "高兴")
-
-    print("医生", "致敬")
-    validator.senti_sim("医生", "致敬")
-    validator.senti_sim("悲伤", "伤心")
+    # print("疫情", "愤怒")
+    # validator.senti_sim("疫情", "愤怒")
+    # print("疫情", "高兴")
+    # validator.senti_sim("疫情", "高兴")
+    #
+    # print("医生", "致敬")
+    # validator.senti_sim("医生", "致敬")
+    # validator.senti_sim("悲伤", "伤心")
     # validator.most_sim("疫情", number=10)
