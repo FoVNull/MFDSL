@@ -72,8 +72,8 @@ class OneHot(Classifier):
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
-    parse.add_argument("--corpus", type=str, default="amazon/kitchen/vali2000.tsv", help="specify corpus")
-    parse.add_argument("--random_count", dest="count", default=10)
+    parse.add_argument("--corpus", type=str, default="amazon/video/vali2000.tsv", help="specify corpus")
+    parse.add_argument("--random_count", dest="count", default=1)
     parse.add_argument("--base", type=str, default="senticnet", help="specific one-hot embedding method")
 
     args = parse.parse_args()

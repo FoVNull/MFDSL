@@ -43,7 +43,7 @@ class Classifier:
         x_train, x_test, y_train, y_test = train_test_split(
             [tp[0] for tp in self.train_data],
             [tp[1] for tp in self.train_data],
-            test_size=0.9, random_state=random_seed, shuffle=True
+            test_size=0.5, random_state=random_seed, shuffle=True
         )
         self.model.fit(x_train, y_train)
         print("train acc:", self.model.score(x_train, y_train))
@@ -77,9 +77,10 @@ class Classifier:
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
-    parse.add_argument("--corpus", type=str, default="amazon/book/vali2000.tsv", help="specify corpus")
-    parse.add_argument("--dic_path", type=str, default="../reference/output/glove.pkl", help="specify sentiment dictionary")
-    parse.add_argument("--dimension", default=25, type=int,
+    parse.add_argument("--corpus", type=str, default="amazon/video/vali2000.tsv", help="specify corpus")
+    parse.add_argument("--dic_path", type=str, default="../reference/output/wv.pkl",
+                       help="specify sentiment dictionary")
+    parse.add_argument("--dimension", default=100, type=int,
                        help="dimension of dictionary")
     parse.add_argument("--random_count", dest="count", default=10)
 

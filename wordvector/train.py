@@ -7,11 +7,11 @@ import argparse
 def fasttext_train(tool):
     assert tool == 'fasttext' or tool == 'word2vec', 'you can choose: [word2vec, fasttext]'
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-    sentences = word2vec.LineSentence(u'../corpus/zh_train.txt')
+    sentences = word2vec.LineSentence(u'../corpus/amazon/video/all.txt')
     if tool == 'fasttext':
-        _model = FastText(sentences, size=100, window=5, min_count=2, iter=30, min_n=2, max_n=8, word_ngrams=0)
+        _model = FastText(sentences, size=100, iter=30, min_count=5, word_ngrams=1)
     else:
-        _model = word2vec.Word2Vec(sentences, size=100, window=5, min_count=5, iter=30, hs=1)
+        _model = word2vec.Word2Vec(sentences, size=100, iter=30, min_count=8)
     _model.save('../reference/wc_model/output')
 
 
