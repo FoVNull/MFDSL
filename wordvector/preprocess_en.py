@@ -3,8 +3,7 @@ import pandas as pd
 from lxml import etree
 import re
 
-
-word_flag = ['ADJ', 'ADV', 'INTJ']#, 'NOUN', 'VERB', 'INTJ']
+word_flag = ['ADJ', 'ADV', 'INTJ']  # , 'NOUN', 'VERB', 'INTJ']
 nlp = en_core_web_lg.load()
 
 
@@ -74,13 +73,14 @@ def save_data_rates(path, texts, rates):
 
 
 def merge(path1, path2, save_path):
-    content = [(line.strip(), 'p') for line in open(path1,'r',encoding='utf-8').readlines()] + \
-    [(line.strip(), 'n') for line in open(path2, 'r', encoding='utf-8').readlines()]
+    content = [(line.strip(), 'p') for line in open(path1, 'r', encoding='utf-8').readlines()] + \
+              [(line.strip(), 'n') for line in open(path2, 'r', encoding='utf-8').readlines()]
     with open(save_path, 'w', encoding='utf-8') as f:
         for c in content:
-            f.write(c[0]+"\t"+c[1]+"\n")
+            f.write(c[0] + "\t" + c[1] + "\n")
 
-cut_txt("../corpus/amazon/book/book_unlabeled.txt")
+
+# cut_txt("../corpus/amazon/book/book_unlabeled.txt")
 # cut_txt("../corpus/amazon/book/review_positive.txt")
 # cut_txt("../corpus/amazon/book/review_negative.txt")
 # merge("../corpus/amazon/book/review_positive_cut.txt", "../corpus/amazon/book/review_negative_cut.txt", "../corpus/amazon/book/vali6000.tsv")
@@ -90,40 +90,22 @@ cut_txt("../corpus/amazon/book/book_unlabeled.txt")
 # cut_xml("../corpus/classics/classics.xml")
 
 
-# import pandas as pd
-# df = pd.read_csv("D:/python/mylibs/Hotel_Reviews.csv")
-# pos = []
-# neg = []
-# for i in range(len(df)):
-#     n = df.loc[i, 'Negative_Review']
-#     p = df.loc[i, 'Positive_Review']
-#     if n != "No Negative":
-#         neg.append(n)
-#     if p != "No Positive":
-#         pos.append(p)
-#
-# def cut_csv(arr, p, path):
-#     _cut_text = []
-#     for doc in nlp.pipe(arr):
-#         s = []
-#         for token in doc:
-#             if not nlp.vocab[token.text].is_stop and token.pos_ in word_flag:
-#                 s.append(token.text)
-#         _cut_text.append(s)
-#     save(_cut_text, p, path)
-# def save(arr, p, path):
-#     with open(path, 'w', encoding='utf-8') as f:
-#         for i in arr:
-#             if " ".join(i) == "":
-#                 continue
-#             f.write(" ".join(i)+"\t"+p+"\n")
+data = pd.read_excel("../corpus/classics/amazon_reviews_sz_gbk.xlsx", header=0)
+tagger = en_core_web_lg.load()
+with open("../corpus/classics/classics_reviews.txt", 'w', encoding='utf-8') as f:
+    for text in data['内容']:
+        if str(text) == 'nan':
+            continue
+        tokens = [token.text
+                  for token in tagger(str(text))
+                  if not tagger.vocab[token.text].is_stop and token.pos_ in word_flag
+                  ]
+        if len(tokens) == 0:
+            continue
+        f.write(" ".join(tokens) + "\n")
 
 # cut_csv(pos, 'p', "../corpus/hotel_en/pos.txt")
 # cut_csv(neg, 'p', "../corpus/hotel_en/neg.txt")
 # cut_csv(neg[:8000], 'n', "../corpus/hotel_en/validation10000.tsv")
 # cut_csv(pos[:8000], 'p', "../corpus/hotel_en/pos_cut.tsv")
 # save(pos+neg, 'n', "../corpus/hotel_en/all4train.txt")
-
-
-
-

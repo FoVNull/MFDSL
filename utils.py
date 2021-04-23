@@ -171,13 +171,47 @@ def seed_select(dimension: int, weight_schema, language):
             try:
                 if concept == "helpful":
                     continue
-                senti_dic[concept] = float(sn.polarity_value(concept)) * 10 + senti_dic.get(concept, 0.0)
+                senti_dic[concept] = float(sn.polarity_value(concept)) + senti_dic.get(concept, 0.0)
             except KeyError:
                 print("unexpected problem! feedback:github.com/FoVNull")
+        # SocialSent
+        with open("./reference/stf_adj_2000.tsv") as f:
+            for line in f.readlines():
+                try:
+                    w, v = line.split("\t")[:2]
+                except Exception:
+                    print(line.split("\t"))
+                senti_dic[w] = senti_dic.get(w, 0.0) + float(v) + 0.5
+        with open("./reference/stf_freq_2000.tsv") as f:
+            for line in f.readlines():
+                w, v = line.split("\t")[:2]
+                senti_dic[w] = senti_dic.get(w, 0.0) + float(v) + 0.5
 
     assert weight_schema in ['mcw', 'tf_idf', 'mix'], \
         'you can choose: [mcw, tf_idf, mix]'
     weight = pickle.load(open("./reference/output/" + weight_schema + ".pkl", 'rb'))
+
+    # 先行生成词典
+    p_senti_dic = []
+    n_senti_dic = []
+    weight_keys = [t[0] for t in weight]
+    for item in senti_dic.items():
+        if item[0] not in weight_keys:
+            continue
+        if float(item[1]) > 0:
+            p_senti_dic.append((item[0], item[1]))
+        elif float(item[1]) < 0:
+            n_senti_dic.append((item[0], item[1]))
+    with open("./reference/output/vocab.tsv", 'w', encoding='utf-8') as f:
+        # 选取超过阈值情感词
+        p_len = int(len(p_senti_dic) * 1)
+        n_len = int(len(n_senti_dic) * 1)
+        print(p_len, n_len)
+        for tp in sorted(p_senti_dic, key=lambda x: x[1], reverse=True)[:p_len]:
+            f.write(tp[0] + "\t" + str(tp[1]) + "\n")
+        for tp in sorted(n_senti_dic, key=lambda x: x[1], reverse=False)[:n_len]:
+            f.write(tp[0] + "\t" + str(tp[1]) + "\n")
+
 
     p_seed_dic = {}
     n_seed_dic = {}
@@ -202,12 +236,4 @@ def seed_select(dimension: int, weight_schema, language):
         for tp in p_seeds:
             f.write(tp[0] + "\t" + str(tp[1]) + "\n")
         for tp in n_seeds:
-            f.write(tp[0] + "\t" + str(tp[1]) + "\n")
-
-    with open("./reference/output/vocab.tsv", 'w', encoding='utf-8') as f:
-        p_len = int(len(p_seed_dic) * 0.8)
-        n_len = int(len(n_seed_dic) * 0.8)
-        for tp in sorted(p_seed_dic.items(), key=lambda x: x[1], reverse=True)[:p_len]:
-            f.write(tp[0] + "\t" + str(tp[1]) + "\n")
-        for tp in sorted(n_seed_dic.items(), key=lambda x: x[1], reverse=False)[:n_len]:
             f.write(tp[0] + "\t" + str(tp[1]) + "\n")
