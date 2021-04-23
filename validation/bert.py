@@ -10,23 +10,25 @@ class BertValidation(Classifier):
 
     def load_data(self):
         texts = []
-        with open("../corpus/amazon/book/all.txt", 'r', encoding='utf-8') as f:
+        with open("../corpus/amazon/dvd/all.txt", 'r', encoding='utf-8') as f:
             for line in f.readlines():
+                if line.strip() == "":
+                    continue
                 texts.append(line.strip())
         doc_vecs = self.bc.encode(texts)
         with open("../corpus/" + self.args.corpus, 'r', encoding='utf-8') as f:
-            i = 0
+            _i = 0
             for line in f.readlines():
                 if len(line.strip().split("\t")) < 2:
                     continue
                 senti = line.strip().split("\t")[1]
-                self.train_data.append((doc_vecs[i], senti))
-                i += 1
+                self.train_data.append((doc_vecs[_i], senti))
+                _i += 1
 
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
-    parse.add_argument("--corpus", type=str, default="amazon/book/vali2000.tsv", help="specify corpus")
+    parse.add_argument("--corpus", type=str, default="amazon/dvd/vali2000.tsv", help="specify corpus")
     parse.add_argument("--random_count", dest="count", default=10)
 
     args = parse.parse_args()

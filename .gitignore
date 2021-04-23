@@ -34,3 +34,4 @@ corpus/zh_train.txt
 corpus/hotel_en/validation10000.tsv
 corpus/hotel_en/pos.txt
 corpus/hotel_en/neg.txt
+corpus/amazon
