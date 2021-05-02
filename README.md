@@ -1,4 +1,4 @@
-# MCBSL
+# MFDSL
 ## Sentiment_Lexicon generate method for specific domin. --Based on muti-domin corpus.
 
 > ## 项目结构
