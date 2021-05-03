@@ -34,8 +34,6 @@ corpus/zh_train.txt
 corpus/hotel_en/validation10000.tsv
 corpus/hotel_en/pos.txt
 corpus/hotel_en/neg.txt
-corpus/amazon
-reference/output/vocab_0.tsv
 reference/output/vocab_0.tsv
 reference/output/vocab_1.tsv
 reference/output/vocab_2.tsv
