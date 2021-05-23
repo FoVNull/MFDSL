@@ -13,7 +13,6 @@ class Classifier:
         self.model = SVC(kernel='linear', probability=True)
 
     def load_data(self):
-        senti_vector = {}
         senti_vector = pickle.load(open(args.dic_path, 'rb'))
         with open("../corpus/" + self.args.corpus, 'r', encoding='utf-8') as f:
             for line in f.readlines():
@@ -77,8 +76,8 @@ class Classifier:
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="sentiment classify validation")
-    parse.add_argument("--corpus", type=str, default="amazon/video/vali2000.tsv", help="specify corpus")
-    parse.add_argument("--dic_path", type=str, default="../reference/output/sv.pkl",
+    parse.add_argument("--corpus", type=str, default="classics/classics_test.tsv", help="specify corpus")
+    parse.add_argument("--dic_path", type=str, default="../reference/output/wv.pkl",
                        help="specify sentiment dictionary")
     parse.add_argument("--dimension", default=100, type=int,
                        help="dimension of dictionary")

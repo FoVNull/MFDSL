@@ -137,12 +137,12 @@ def mix_tf_build():
 def seed_select(dimension: int, weight_schema, language):
     sn = SenticNet()
     senti_dic = {}
-    # with open("./reference/BosonNLP_sentiment_score.txt", 'r', encoding='UTF-8') as f:
-    #     for line in f.readlines():
-    #         if len(line.strip().split(" ")) < 2:
-    #             continue
-    #         w, v = line.strip().split(" ")
-    #         senti_dic[w] = float(v)
+    with open("./reference/BosonNLP_sentiment_score.txt", 'r', encoding='UTF-8') as f:
+        for line in f.readlines():
+            if len(line.strip().split(" ")) < 2:
+                continue
+            w, v = line.strip().split(" ")
+            senti_dic[w] = float(v)
 
     assert language in ['zh', 'en'], "only support [zh, en]"
 
@@ -168,25 +168,25 @@ def seed_select(dimension: int, weight_schema, language):
 
     if language == 'en':
         # SenticNet
-        # for concept in sn.data.keys():
-        #     try:
-        #         if concept == "helpful":
-        #             continue
-        #         senti_dic[concept] = float(sn.polarity_value(concept)) + senti_dic.get(concept, 0.0)
-        #     except KeyError:
-        #         print("unexpected problem! feedback:github.com/FoVNull")
+        for concept in sn.data.keys():
+            try:
+                if concept == "helpful":
+                    continue
+                senti_dic[concept] = float(sn.polarity_value(concept)) + senti_dic.get(concept, 0.0)
+            except KeyError:
+                print("unexpected problem! feedback:github.com/FoVNull")
         # SocialSent
-        with open("./reference/stf_adj_2000.tsv") as f:
-            for line in f.readlines():
-                try:
-                    w, v = line.split("\t")[:2]
-                except Exception:
-                    print(line.split("\t"))
-                senti_dic[w] = senti_dic.get(w, 0.0) + float(v) + 1.0
-        with open("./reference/stf_freq_2000.tsv") as f:
-            for line in f.readlines():
-                w, v = line.split("\t")[:2]
-                senti_dic[w] = senti_dic.get(w, 0.0) + float(v) + 1.0
+        # with open("./reference/stf_adj_2000.tsv") as f:
+        #     for line in f.readlines():
+        #         try:
+        #             w, v = line.split("\t")[:2]
+        #         except ValueError:
+        #             print(line.split("\t"))
+        #         senti_dic[w] = senti_dic.get(w, 0.0) + float(v) + 1.0
+        # with open("./reference/stf_freq_2000.tsv") as f:
+        #     for line in f.readlines():
+        #         w, v = line.split("\t")[:2]
+        #         senti_dic[w] = senti_dic.get(w, 0.0) + float(v) + 1.0
 
     assert weight_schema in ['mcw', 'tf_idf', 'mix'], \
         'you can choose: [mcw, tf_idf, mix]'

@@ -45,13 +45,17 @@ if __name__ == '__main__':
 
     assert args.weight_schema in ['mcw', 'tf_idf', 'mix'], \
         'you can choose: [mcw, tf_idf, mix]'
+    # 调整数值，控制数值在同一范围内
+    sv_weight = 0
     if args.weight_schema == 'mcw':
         if args.weight == "True":
             mcw_dic_build(args.corpus, irre_c)
     if args.weight_schema == 'tf_idf':
+        sv_weight = 1
         if args.weight == "True":
             tf_idf_build(args.corpus)
     if args.weight_schema == 'mix':
+        sv_weight = 1
         if args.weight == "True":
             mcw_dic_build(args.corpus, irre_c)
             tf_idf_build(args.corpus)
@@ -85,6 +89,6 @@ if __name__ == '__main__':
         if tp[0] == '':
             continue
         sv_dic[tp[0]] = [model.wv.similarity(seeds[i], tp[0])
-                         * float(seeds_weight[i]) / 10
+                         * float(seeds_weight[i]) * sv_weight
                          for i in range(len(seeds))]
     pickle.dump(sv_dic, open("./reference/output/sv.pkl", 'wb'))

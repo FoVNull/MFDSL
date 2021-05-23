@@ -3,15 +3,24 @@ import pandas as pd
 from lxml import etree
 import re
 
-
-word_flag = ['ADJ', 'ADV', 'INTJ', 'NOUN', 'VERB']#, 'NOUN', 'VERB', 'INTJ']
+word_flag = ['ADJ', 'ADV', 'INTJ', 'NOUN', 'VERB']  # , 'NOUN', 'VERB', 'INTJ']
 nlp = en_core_web_lg.load()
 
 
 def cut_xlsx(path):
     df = pd.read_excel(path, header=0)
-    texts = df['内容'].values.reshape(-1).tolist()
-    rates = df['星数'].values.reshape(-1).tolist()
+    texts = [content for content in df['内容'] if isinstance(content, str)]
+
+    # rates = df['星数'].values.reshape(-1).tolist()
+
+    def rate2polarity(r):
+        if r >= 3:
+            return "p"
+        else:
+            return "n"
+
+    rates = [rate2polarity(int(rate)) for i, rate in enumerate(df['评级']) if isinstance(df['内容'][i], str)]
+
     cut_text = []
     for doc in nlp.pipe(texts):
         s = []
@@ -19,8 +28,26 @@ def cut_xlsx(path):
             if not nlp.vocab[token.text].is_stop and token.pos_ in word_flag:
                 s.append(token.text)
         cut_text.append(s)
+    p = 0; n = 0
+    texts_test = []
+    rates_test = []
+    for _ in range(len(rates)):
+        if not cut_text[_]:
+            continue
+        if rates[_] == 'p' and p < 600:
+            texts_test.append(cut_text[_])
+            rates_test.append('p')
+            p += 1
+        if rates[_] == 'n' and n < 600:
+            texts_test.append(cut_text[_])
+            rates_test.append('n')
+            n += 1
 
-    save_data_rates(path[:-5] + "_cut.txt", cut_text, rates)
+    with open("../corpus/classics/classics.txt", 'w', encoding='utf-8') as f:
+        for _ in texts:
+            f.write(_ + "\n")
+    save_data("../corpus/classics/classics_cut.txt", cut_text)
+    save_data_rates("../corpus/classics/classics_test.tsv", texts_test, rates_test)
 
 
 def cut_xml(path):
@@ -75,14 +102,15 @@ def save_data_rates(path, texts, rates):
 
 def merge(path1, path2, save_path, save_path2):
     content = [(line.strip(), 'p') for line in open(path1, 'r', encoding='utf-8').readlines()] + \
-    [(line.strip(), 'n') for line in open(path2, 'r', encoding='utf-8').readlines()]
+              [(line.strip(), 'n') for line in open(path2, 'r', encoding='utf-8').readlines()]
     with open(save_path, 'w', encoding='utf-8') as f:
         for c in content:
-            f.write(c[0]+"\t"+c[1]+"\n")
+            f.write(c[0] + "\t" + c[1] + "\n")
 
     with open(save_path2, 'w', encoding='utf-8') as f:
-        for c in content[:1000]+content[-1000:]:
-            f.write(c[0]+"\t"+c[1]+"\n")
+        for c in content[:1000] + content[-1000:]:
+            f.write(c[0] + "\t" + c[1] + "\n")
+
 
 # merge("../corpus/amazon/book/review_positive_cut.txt", "../corpus/amazon/book/review_negative_cut.txt", "../corpus/amazon/book/vali6000.tsv")
 # cut_xlsx("../corpus/classics/classics_en.xlsx")
@@ -91,15 +119,13 @@ def merge(path1, path2, save_path, save_path2):
 # cut_xml("../corpus/classics/classics.xml")
 
 
-for domain in ['dvd', 'electronics', 'kitchen', 'video']:
-    print(domain)
-    # cut_txt("../corpus/amazon/"+domain+"/all.txt")
-    cut_txt("../corpus/amazon/"+domain+"/review_positive.txt")
-    cut_txt("../corpus/amazon/"+domain+"/review_negative.txt")
-    merge("../corpus/amazon/"+domain+"/review_positive_cut.txt",
-          "../corpus/amazon/"+domain+"/review_negative_cut.txt", "../corpus/amazon/"+domain+"/vali6000.tsv",
-          "../corpus/amazon/"+domain+"/vali2000.tsv")
+# for domain in ['dvd', 'electronics', 'kitchen', 'video']:
+#     print(domain)
+#     # cut_txt("../corpus/amazon/"+domain+"/all.txt")
+#     cut_txt("../corpus/amazon/"+domain+"/review_positive.txt")
+#     cut_txt("../corpus/amazon/"+domain+"/review_negative.txt")
+#     merge("../corpus/amazon/"+domain+"/review_positive_cut.txt",
+#           "../corpus/amazon/"+domain+"/review_negative_cut.txt", "../corpus/amazon/"+domain+"/vali6000.tsv",
+#           "../corpus/amazon/"+domain+"/vali2000.tsv")
 
-
-
-
+cut_xlsx("../corpus/classics/amazon_reviews_gbk.xlsx")
