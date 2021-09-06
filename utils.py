@@ -170,11 +170,9 @@ def seed_select(dimension: int, weight_schema, language):
         # SenticNet
         for concept in sn.data.keys():
             try:
-                if concept == "helpful":
-                    continue
                 senti_dic[concept] = float(sn.polarity_value(concept)) + senti_dic.get(concept, 0.0)
-            except KeyError:
-                print("unexpected problem! feedback:github.com/FoVNull")
+            except KeyError as e:
+                print(e, 'concept:'+concept)
         # SocialSent
         # with open("./reference/stf_adj_2000.tsv") as f:
         #     for line in f.readlines():
@@ -236,6 +234,7 @@ def seed_select(dimension: int, weight_schema, language):
         for tp in n_seeds:
             f.write(tp[0] + "\t" + str(tp[1]) + "\n")
 
+    # 典籍英译专用 词表生成
     # with open("./reference/output/vocab_0.tsv", 'w', encoding='utf-8') as f:
     #     p_len = int(len(p_seed_dic) * 1)
     #     n_len = int(len(n_seed_dic) * 1)

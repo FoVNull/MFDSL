@@ -61,9 +61,9 @@ if __name__ == '__main__':
         build_vec(['../reference/output/wv.pkl', '../reference/output/sv.pkl'], args.dimension)
         embedding = WordEmbedding("temp.vec")
         model = globals()[args.model + "_Model"](embedding)
-        model.fit(x_train, y_train, batch_size=64, epochs=30, callbacks=None, fit_kwargs=None)
+        model.fit(x_train, y_train, batch_size=32, epochs=15, callbacks=None, fit_kwargs=None)
 
-        report = model.evaluate(x_test, y_test, batch_size=64, digits=4, truncating=True)
+        report = model.evaluate(x_test, y_test, batch_size=32, digits=4, truncating=True)
         acc = float(report['detail']['accuracy'])
         f1 = float(report['detail']['macro avg']['f1-score'])
         metrics["acc"] += acc

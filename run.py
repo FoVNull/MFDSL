@@ -43,6 +43,7 @@ if __name__ == '__main__':
     if args.lan == "en":
         irre_c = ["./corpus/NYT_comment.txt"]
 
+    # mcw 多语料调整权重
     assert args.weight_schema in ['mcw', 'tf_idf', 'mix'], \
         'you can choose: [mcw, tf_idf, mix]'
     # 调整数值，控制数值在同一范围内
@@ -60,7 +61,6 @@ if __name__ == '__main__':
             mcw_dic_build(args.corpus, irre_c)
             tf_idf_build(args.corpus)
             mix_tf_build()
-
     weight = pickle.load(open("./reference/output/"+args.weight_schema+".pkl", 'rb'))
 
     if args.select_seeds == "True":
