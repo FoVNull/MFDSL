@@ -102,7 +102,7 @@ def tf_idf_build(file: str):
 
     # 每一行都过一层softmax
     for i in tqdm(range(len(matrix))):
-        sum_exp = math.exp(sum(matrix[i]))
+        sum_exp = math.exp(sum(matrix[i])/10)
         for j in range(len(matrix[0])):
             if matrix[i][j] == 0:
                 continue
@@ -137,12 +137,12 @@ def mix_tf_build():
 def seed_select(dimension: int, weight_schema, language):
     sn = SenticNet()
     senti_dic = {}
-    with open("./reference/BosonNLP_sentiment_score.txt", 'r', encoding='UTF-8') as f:
-        for line in f.readlines():
-            if len(line.strip().split(" ")) < 2:
-                continue
-            w, v = line.strip().split(" ")
-            senti_dic[w] = float(v)
+    # with open("./reference/BosonNLP_sentiment_score.txt", 'r', encoding='UTF-8') as f:
+    #     for line in f.readlines():
+    #         if len(line.strip().split(" ")) < 2:
+    #             continue
+    #         w, v = line.strip().split(" ")
+    #         senti_dic[w] = float(v)
 
     assert language in ['zh', 'en'], "only support [zh, en]"
 

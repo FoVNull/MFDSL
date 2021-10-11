@@ -24,7 +24,12 @@ def cut_words(path, p):
                           if word.word not in stop_set])
 
     # save_data_rates(path[:-4] + "_cut.txt", texts,  [p]*len(texts))
-    save_data(path[:-4] + "_cut.txt", texts)
+    # save_data(path[:-4] + "_cut.txt", texts)
+    with open(path[:-4] + "_cut.tsv", 'w', encoding='utf-8') as f:
+        for text in texts:
+            if text == "":
+                continue
+            f.write(" ".join(text) + "\tNAN\n")
 
 
 def cut_csv(path):
@@ -95,16 +100,16 @@ def save_data_rates(path, texts, rates):
 # cut_words("../corpus/hotel/pos.txt", 'p')
 # cut_words("../corpus/hotel/neg.txt", 'n')
 # cut_json("../corpus/all_data_data.json")
-# cut_words("../corpus/hotel/all.txt", 'p')
+cut_words("../corpus/hotel/all.txt", 'p')
 # merge_corpus("../corpus/hotel/neg_cut.txt", "../corpus/hotel/pos_cut.txt", "../corpus/hotel/all_cut.tsv")
 # merge_corpus("../corpus/hotel/neg.txt", "../corpus/hotel/pos.txt", "../corpus/hotel/all.txt")
 # cut_xml("../corpus/NLPIR_weibo.xml", "//article")
 # merge_corpus("../corpus/hotel/all4train.txt", "../corpus/NLPIR_weibo.txt", "../corpus/zh_train.txt")
-cut_words("../corpus/hotel/all4000.txt", 'p')
-text = [line.strip() for line in open("../corpus/hotel/all4000_cut.txt")]
-with open("../corpus/hotel/test4000_non.tsv", 'w', encoding='utf-8') as f:
-    for i in text[:2000]:
-        f.write(i+"\tn\n")
-    for i in text[2000:]:
-        f.write(i+"\tp\n")
+# cut_words("../corpus/hotel/all4000.txt", 'p')
+# text = [line.strip() for line in open("../corpus/hotel/all4000_cut.txt")]
+# with open("../corpus/hotel/test4000_non.tsv", 'w', encoding='utf-8') as f:
+#     for i in text[:2000]:
+#         f.write(i+"\tn\n")
+#     for i in text[2000:]:
+#         f.write(i+"\tp\n")
 

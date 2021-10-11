@@ -9,7 +9,7 @@ def fasttext_train(tool):
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
     sentences = word2vec.LineSentence(u'../corpus/scicite/all.txt')
     if tool == 'fasttext':
-        _model = FastText(sentences, size=100, iter=10, min_count=2, word_ngrams=1)
+        _model = FastText(sentences, size=200, iter=30, min_count=2, word_ngrams=3)
     else:
         _model = word2vec.Word2Vec(sentences, size=100, iter=10, min_count=2)
     _model.save('../reference/wc_model/output')

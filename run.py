@@ -52,11 +52,11 @@ if __name__ == '__main__':
         if args.weight == "True":
             mcw_dic_build(args.corpus, irre_c)
     if args.weight_schema == 'tf_idf':
-        sv_weight = 1
+        sv_weight = 0.001
         if args.weight == "True":
             tf_idf_build(args.corpus)
     if args.weight_schema == 'mix':
-        sv_weight = 1
+        sv_weight = 0.001
         if args.weight == "True":
             mcw_dic_build(args.corpus, irre_c)
             tf_idf_build(args.corpus)
