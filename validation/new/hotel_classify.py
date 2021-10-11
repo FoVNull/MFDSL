@@ -64,11 +64,12 @@ def read_hotel(senti_dic):
         for word in jieba.cut(item[0], cut_all=True):
             # continue
             if word not in senti_dic.keys():
+                line_features.append([0.]*sv_dim)
                 continue
             if len(line_features) > 0:
-                line_features += senti_dic[word] if word in senti_dic.keys() else [0.]*sv_dim
+                line_features.append(senti_dic[word])
             else:
-                line_features = senti_dic[word]if word in senti_dic.keys() else [0.]*sv_dim
+                line_features.append(senti_dic[word])
         features.append(line_features)
 
     return x_data, y_data, features
@@ -161,7 +162,7 @@ class Trainer:
             x_data, y_data, features, test_size=1000, random_state=114514)
         # x_vali, x_test, y_vali, y_test, vali_features, test_features = train_test_split(
         #     x_test, y_test, test_features, train_size=500)
-        model = Bare_Model(embedding, feature_D=len(train_features[0]))
+        model = Bare_Model(embedding, feature_D=len(train_features[0][0]))
         with tf.device('/gpu:2'):
             model.fit(x_train=(x_train, train_features), y_train=y_train,
                       # x_validate=(x_vali, vali_features), y_validate=y_vali,

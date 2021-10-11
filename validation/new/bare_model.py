@@ -46,9 +46,8 @@ class Bare_Model(ABCClassificationModel):
 
         BiLSTM + Convolution + Attention
         """
-        features = tf.keras.Input(shape=self.feature_D, name="features")
-        print(features)
-        exit(99)
+        features = tf.keras.Input(shape=(None, self.feature_D), name="features")
+
         l1_reg = tf.keras.regularizers.l1(0.01)
         l2_reg = tf.keras.regularizers.L2(0.01)
 
@@ -66,6 +65,9 @@ class Bare_Model(ABCClassificationModel):
         for layer in layer_stack:
             tensor = layer(tensor)
 
+        # extend features
+        features_tensor = L.Dense(64, kernel_regularizer=l1_reg)(features)
+        tensor = L.Concatenate(axis=-1)([features_tensor, tensor])
         '''
         define attention layer
         as a nlp-rookie im wondering whether this is a right way XD
@@ -78,14 +80,7 @@ class Bare_Model(ABCClassificationModel):
         query_encoding = L.GlobalMaxPool1D()(tensor)
         query_value_attention = L.GlobalMaxPool1D()(query_value_attention_seq)
 
-        tensor_2d = L.Concatenate(axis=-1)([query_encoding, query_value_attention])
-
-        # without multi-head-att
-        # input_tensor = L.GlobalMaxPool1D()(tensor)
-
-        # extend features
-        features_tensor = L.Dense(64, kernel_regularizer=l1_reg)(features)
-        input_tensor = L.Concatenate(axis=-1)([features_tensor, tensor_2d])
+        input_tensor = L.Concatenate(axis=-1)([query_encoding, query_value_attention])
 
         # output tensor
         input_tensor = L.Dropout(rate=0.1)(input_tensor)
