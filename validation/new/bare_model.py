@@ -67,20 +67,19 @@ class Bare_Model(ABCClassificationModel):
 
         # extend features
         features_tensor = L.Dense(64, kernel_regularizer=l1_reg)(features)
-        tensor = L.Concatenate(axis=-1)([features_tensor, tensor])
-        '''
-        define attention layer
-        as a nlp-rookie im wondering whether this is a right way XD
-        '''
-        # query_value_attention_seq = L.Attention()([tensor, tensor])
-        query_value_attention_seq = L.MultiHeadAttention(
-            num_heads=4, key_dim=2, dropout=0.5
-        )(tensor, tensor)
+        # tensor = L.Concatenate(axis=-1)([features_tensor, tensor])
+        query = L.Concatenate(axis=-1)([tensor, features_tensor])
+        key = L.Concatenate(axis=-1)([features_tensor, tensor])
 
-        query_encoding = L.GlobalMaxPool1D()(tensor)
+        query_value_attention_seq = L.Attention()([query, key])
+        # query_value_attention_seq = L.MultiHeadAttention(
+        #     num_heads=4, key_dim=2, dropout=0.5
+        # )(tensor, tensor)
+
+        query_encoding = L.GlobalMaxPool1D()(query)
         query_value_attention = L.GlobalMaxPool1D()(query_value_attention_seq)
 
-        input_tensor = L.Concatenate(axis=-1)([query_encoding, query_value_attention])
+        input_tensor = L.Concatenate(axis=1)([query_encoding, query_value_attention])
 
         # output tensor
         input_tensor = L.Dropout(rate=0.1)(input_tensor)

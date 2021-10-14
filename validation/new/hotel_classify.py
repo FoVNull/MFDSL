@@ -129,23 +129,23 @@ class Trainer:
 
         embedding = self._embedding(xlnet_corpus=xlnet_corpus)
 
-        # data_gen = self.k_fold(6, x_data, y_data, features)
-        # reports = []
-        # for x_test, y_test, test_features, \
-        #     x_train, y_train, train_features in data_gen:
-        #     model = Bare_Model(embedding, feature_D=len(train_features[0]))
-        #     # model = BiLSTM_Model(embedding)
-        #
-        #     print("train-{}, test-{}".format(len(x_train), len(x_test)))
-        #     with tf.device('/gpu:2'):
-        #         model.fit(x_train=(x_train, train_features), y_train=y_train,
-        #                   batch_size=32, epochs=10, callbacks=None, fit_kwargs=None)
-        #         # model.fit(x_train=x_train, y_train=y_train,
-        #         #           batch_size=32, epochs=10, callbacks=None, fit_kwargs=None)
-        #     with tf.device('/gpu:3'):
-        #         reports.append(self.evaluate(model, x_test, y_test, test_features))
-        #         # reports.append(self.evaluate_nonf(model, x_test, y_test))
-        # self.save_res(reports, 6)
+        data_gen = self.k_fold(6, x_data, y_data, features)
+        reports = []
+        for x_test, y_test, test_features, \
+            x_train, y_train, train_features in data_gen:
+            model = Bare_Model(embedding, feature_D=len(train_features[0][0]))
+            # model = BiLSTM_Model(embedding)
+
+            print("train-{}, test-{}".format(len(x_train), len(x_test)))
+            with tf.device('/gpu:2'):
+                model.fit(x_train=(x_train, train_features), y_train=y_train,
+                          batch_size=32, epochs=15, callbacks=None, fit_kwargs=None)
+                # model.fit(x_train=x_train, y_train=y_train,
+                #           batch_size=32, epochs=10, callbacks=None, fit_kwargs=None)
+            with tf.device('/gpu:3'):
+                reports.append(self.evaluate(model, x_test, y_test, test_features))
+                # reports.append(self.evaluate_nonf(model, x_test, y_test))
+        self.save_res(reports, 6)
 
         # 测试
         # x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=1000, random_state=114514)
@@ -158,17 +158,17 @@ class Trainer:
         # with tf.device('/gpu:3'):
         #     model.evaluate(x_test, y_test, batch_size=32)
 
-        x_train, x_test, y_train, y_test, train_features, test_features = train_test_split(
-            x_data, y_data, features, test_size=1000, random_state=114514)
-        # x_vali, x_test, y_vali, y_test, vali_features, test_features = train_test_split(
-        #     x_test, y_test, test_features, train_size=500)
-        model = Bare_Model(embedding, feature_D=len(train_features[0][0]))
-        with tf.device('/gpu:2'):
-            model.fit(x_train=(x_train, train_features), y_train=y_train,
-                      # x_validate=(x_vali, vali_features), y_validate=y_vali,
-                      batch_size=32, epochs=15, callbacks=None, fit_kwargs=None)
-        with tf.device('/gpu:3'):
-            self.evaluate(model, x_test, y_test, test_features)
+        # x_train, x_test, y_train, y_test, train_features, test_features = train_test_split(
+        #     x_data, y_data, features, test_size=1000, random_state=114514)
+        # # x_vali, x_test, y_vali, y_test, vali_features, test_features = train_test_split(
+        # #     x_test, y_test, test_features, train_size=500)
+        # model = Bare_Model(embedding, feature_D=len(train_features[0][0]))
+        # with tf.device('/gpu:2'):
+        #     model.fit(x_train=(x_train, train_features), y_train=y_train,
+        #               # x_validate=(x_vali, vali_features), y_validate=y_vali,
+        #               batch_size=32, epochs=15, callbacks=None, fit_kwargs=None)
+        # with tf.device('/gpu:3'):
+        #     self.evaluate(model, x_test, y_test, test_features)
 
     @staticmethod
     def evaluate(model, x_test_pure, y_test, features):
