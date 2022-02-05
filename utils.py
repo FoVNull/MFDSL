@@ -8,6 +8,8 @@ from tqdm import tqdm
 import collections
 import numpy as np
 
+import sys
+prefix = sys.path[0]
 
 def mcw_dic_build(file: str, others: list):
     word_dic = {}
@@ -49,7 +51,7 @@ def mcw_dic_build(file: str, others: list):
     # for k, v in bi_tf.items():
     #     bi_tf[k] = math.exp(v)/sum_exp
 
-    pickle.dump(sorted(bi_tf.items(), key=lambda x: x[1], reverse=True), open("./reference/output/mcw.pkl", 'wb'))
+    pickle.dump(sorted(bi_tf.items(), key=lambda x: x[1], reverse=True), open(f"{prefix}/reference/output/mcw.pkl", 'wb'))
 
 
 def tf_idf_build(file: str):
@@ -112,12 +114,12 @@ def tf_idf_build(file: str):
         _value = sum(matrix[:, i])
         tf_idf[tk.index_word[i]] = _value
 
-    pickle.dump(sorted(tf_idf.items(), key=lambda x: x[1], reverse=True), open("./reference/output/tf_idf.pkl", 'wb'))
+    pickle.dump(sorted(tf_idf.items(), key=lambda x: x[1], reverse=True), open(f"{prefix}/reference/output/tf_idf.pkl", 'wb'))
 
 
 def mix_tf_build():
-    tf2w = pickle.load(open("./reference/output/mcw.pkl", 'rb'))
-    tf_idf = pickle.load(open("./reference/output/tf_idf.pkl", 'rb'))
+    tf2w = pickle.load(open(f"{prefix}/reference/output/mcw.pkl", 'rb'))
+    tf_idf = pickle.load(open(f"{prefix}/reference/output/tf_idf.pkl", 'rb'))
 
     mix_tf = {}
     for tp in tf2w:
@@ -131,7 +133,7 @@ def mix_tf_build():
     # for k, v in mix_tf.items():
     #     mix_tf[k] = math.exp(v)/sum_exp
 
-    pickle.dump(sorted(mix_tf.items(), key=lambda x: x[1], reverse=True), open("./reference/output/mix.pkl", 'wb'))
+    pickle.dump(sorted(mix_tf.items(), key=lambda x: x[1], reverse=True), open(f"{prefix}/reference/output/mix.pkl", 'wb'))
 
 
 def seed_select(dimension: int, weight_schema, language):
@@ -154,7 +156,7 @@ def seed_select(dimension: int, weight_schema, language):
             except KeyError:
                 print("unexpected problem! feedback:github.com/FoVNull")
 
-        df = pd.read_excel("./reference/情感词汇本体.xlsx", header=0, keep_default_na=False)
+        df = pd.read_excel(f"{prefix}/reference/情感词汇本体.xlsx", header=0, keep_default_na=False)
         for i in range(len(df)):
             emotion_type = df.iloc[i]['情感分类']
             strength = df.loc[i, '强度']
@@ -186,9 +188,15 @@ def seed_select(dimension: int, weight_schema, language):
         #         w, v = line.split("\t")[:2]
         #         senti_dic[w] = senti_dic.get(w, 0.0) + float(v) + 1.0
 
-    assert weight_schema in ['mcw', 'tf_idf', 'mix'], \
-        'you can choose: [mcw, tf_idf, mix]'
-    weight = pickle.load(open("./reference/output/" + weight_schema + ".pkl", 'rb'))
+    assert weight_schema in ['mcw', 'tf_idf', 'mix', 'none'], \
+        'you can choose: [mcw, tf_idf, mix, none]'
+    if weight_schema == 'none':
+        weight = []
+        for k,v in senti_dic.items():
+            weight.append((k, 1))
+    else:
+        weight = pickle.load(open(f"{prefix}/reference/output/" + weight_schema + ".pkl", 'rb'))
+    
 
     # 先行生成词典
     # p_senti_dic = []
@@ -228,7 +236,7 @@ def seed_select(dimension: int, weight_schema, language):
     p_seeds = sorted(p_seed_dic.items(), key=lambda x: x[1], reverse=True)[:dimension]
     n_seeds = sorted(n_seed_dic.items(), key=lambda x: x[1], reverse=False)[:dimension]
 
-    with open("./reference/output/seeds.tsv", 'w', encoding='utf-8') as f:
+    with open(f"{prefix}/reference/output/seeds.tsv", 'w', encoding='utf-8') as f:
         for tp in p_seeds:
             f.write(tp[0] + "\t" + str(tp[1]) + "\n")
         for tp in n_seeds:
@@ -243,3 +251,4 @@ def seed_select(dimension: int, weight_schema, language):
     #     for tp in sorted(n_seed_dic.items(), key=lambda x: x[1], reverse=False)[:n_len]:
     #         f.write(tp[0] + "\t" + str(tp[1]) + "\n")
     # exit(99)
+    return weight

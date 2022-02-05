@@ -7,12 +7,13 @@ import argparse
 def fasttext_train(tool):
     assert tool == 'fasttext' or tool == 'word2vec', 'you can choose: [word2vec, fasttext]'
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-    sentences = word2vec.LineSentence(u'../corpus/scicite/all.txt')
+    sentences = word2vec.LineSentence(u'../corpus/zh_train.txt')
     if tool == 'fasttext':
-        _model = FastText(sentences, size=200, iter=30, min_count=2, word_ngrams=3)
+        _model = FastText(sentences, size=300, iter=30, min_count=2, word_ngrams=3)
     else:
         _model = word2vec.Word2Vec(sentences, size=100, iter=10, min_count=2)
-    _model.save('../reference/wc_model/output')
+    # _model.save('../reference/wc_model/output')
+    return _model
 
 
 if __name__ == '__main__':
@@ -20,13 +21,13 @@ if __name__ == '__main__':
     parse.add_argument("--model", required=True, type=str, help="[word2vec, fasttext]")
 
     args = parse.parse_args()
-    fasttext_train(args.model)
+    model = fasttext_train(args.model)
     import pickle
 
-    if args.model == 'fasttext':
-        model = FastText.load("../reference/wc_model/output")
-    else:
-        model = word2vec.Word2Vec.load("../reference/wc_model/output")
+    # if args.model == 'fasttext':
+    #     model = FastText.load("../reference/wc_model/output")
+    # else:
+    #     model = word2vec.Word2Vec.load("../reference/wc_model/output")
     dic = {}
     for i in model.wv.vocab:
         dic[i] = model.wv[i].tolist()

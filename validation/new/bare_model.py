@@ -6,7 +6,7 @@ from kashgari_local.abc_feature_model import ABCClassificationModel
 from kashgari.layers import L
 
 
-class Bare_Model(ABCClassificationModel):
+class FeatureFusion_Model(ABCClassificationModel):
     def __init__(self, embedding, **params):
         super().__init__(embedding)
         self.feature_D = params["feature_D"]
@@ -27,17 +27,7 @@ class Bare_Model(ABCClassificationModel):
             'layer_bilstm1': {
                 'units': 128,
                 'return_sequences': True
-            },
-            'layer_time_distributed': {},
-            'conv_layer1': {
-                'filters': 128,
-                'kernel_size': 4,
-                'padding': 'valid',
-                'activation': 'relu'
-            },
-            'layer_output1': {
-                'activation': 'softmax'
-            },
+            }
         }
 
     def build_model_arc(self):
@@ -66,6 +56,7 @@ class Bare_Model(ABCClassificationModel):
             tensor = layer(tensor)
 
         # extend features
+<<<<<<< Updated upstream
         features_tensor = L.Dense(64, kernel_regularizer=l1_reg)(features)
         # tensor = L.Concatenate(axis=-1)([features_tensor, tensor])
         query = L.Concatenate(axis=-1)([tensor, features_tensor])
@@ -80,6 +71,36 @@ class Bare_Model(ABCClassificationModel):
         query_value_attention = L.GlobalMaxPool1D()(query_value_attention_seq)
 
         input_tensor = L.Concatenate(axis=1)([query_encoding, query_value_attention])
+=======
+        features_tensor = L.Dense(128, kernel_regularizer=l1_reg)(features)
+        features_tensor = L.Bidirectional(L.LSTM(units=32, return_sequences=True))(features_tensor)
+
+        # cross attention
+        # print(tf.transpose(features_tensor, perm=[0, 2, 1]))
+        # tensor_a = tf.matmul(features_tensor, tensor)
+        # tensor_b = tf.matmul(tensor, features_tensor)
+        # query_encoding = L.GlobalMaxPool1D()(tensor)
+        # query_value_attention = L.GlobalMaxPool1D()(L.Attention()([tensor_a, tensor_b]))
+        # input_tensor = L.Concatenate(axis=-1)([query_encoding, query_value_attention])
+        # input_tensor = tensor_a
+
+        # concat non-att
+        # tensor = L.Concatenate(axis=-1)([features_tensor, tensor])
+        # input_tensor = L.GlobalMaxPool1D()(tensor)
+
+        # concat + self_att
+        # tensor = L.Concatenate(axis=-1)([features_tensor, tensor])
+        # query_encoding = L.GlobalMaxPool1D()(tensor)
+        # query_value_attention = L.GlobalMaxPool1D()(L.Attention()([tensor, tensor]))
+        # input_tensor = L.Concatenate(axis=-1)([query_encoding, query_value_attention])
+
+        # multi-head
+        tensor = L.Concatenate(axis=-1)([features_tensor, tensor])
+        query_value_attention_seq = L.MultiHeadAttention(num_heads=2, key_dim=2, dropout=0.5)(tensor, tensor)
+        query_encoding = L.GlobalMaxPool1D()(tensor)
+        query_value_attention = L.GlobalMaxPool1D()(query_value_attention_seq)
+        input_tensor = L.Concatenate(axis=-1)([query_encoding, query_value_attention])
+>>>>>>> Stashed changes
 
         # output tensor
         input_tensor = L.Dropout(rate=0.1)(input_tensor)
