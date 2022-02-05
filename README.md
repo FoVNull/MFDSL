@@ -3,9 +3,6 @@
 
 > ## 项目结构
 >- /corpus：训练语料 
->>- /amazon 英文实验数据，5领域亚马逊评论语料
->>- /hotel 中文实验数据，谭松波酒店评论语料
->>- NYT_comment_cut.txt 纽约时报评论语料(分词后)
 >- /reference： 参考资料
 >>- /output：各个过程的输出结果  
 >>- /wc_output：词向量训练结果  
@@ -13,12 +10,16 @@
 >>- bert.py 使用预训练bert(bert-with-service必须 & tensorflow==1.1x)
 >>- one_hot.py 使用one_hot进行文本表示(基于情感词典)
 >>- classify.py 使用MFDSL-、词向量进行文本表示。
+>- /validation/new
+>>- classify.py 深度学习做情感分类
+>>- bare_model.py 分类模型
+>>- kashgari_local 自定义的kashgari内容
 >- /test 测试文件夹
 >- sopmi.py 提供sopmi值的计算
 >- run.py 项目入口
 >- utils.py 主要业务逻辑
 
-## 说明
+## 情感词典说明
 生成情感词典方法
 ```
 !python run.py --corpus ./corpus/amazon/dvd/all_cut.txt 
@@ -37,4 +38,9 @@
 
 输出结果：./reference/output/sv.pkl   
 输出结果为<情感词, 向量>的字典: [str, List[]]，可以使用pickle包直接读取
- 
+
+
+## 情感分类说明  
+环境初始化 MFDSL_init.sh（适用于linux系统）  
+
+整体执行过程: MFDSL.ipynb
